@@ -28,15 +28,16 @@
               :placeholder="getManualFieldPlaceholder(field)"
             />
 
-            <select
-              v-else-if="field.type === 'select'"
-              :value="getFieldValue(manualItem.itemKey, field.key)"
-              @change="updateFieldValue(manualItem.itemKey, field.key, ($event.target as HTMLSelectElement).value)"
-              class="w-full form-input-compact"
-            >
-              <option value="">{{ t('checkout.manualFormSelectPlaceholder') }}</option>
-              <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
-            </select>
+            <div v-else-if="field.type === 'select'" class="theme-select-wrap">
+              <select
+                :value="getFieldValue(manualItem.itemKey, field.key)"
+                @change="updateFieldValue(manualItem.itemKey, field.key, ($event.target as HTMLSelectElement).value)"
+                class="w-full form-input-compact theme-select"
+              >
+                <option value="">{{ t('checkout.manualFormSelectPlaceholder') }}</option>
+                <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
+              </select>
+            </div>
 
             <div v-else-if="field.type === 'radio'" class="space-y-2 rounded-xl border theme-surface-soft p-3">
               <label v-for="option in field.options" :key="option" class="flex items-center gap-2 text-sm theme-text-secondary">

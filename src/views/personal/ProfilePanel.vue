@@ -36,14 +36,16 @@
 
         <div>
           <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.profile.localeLabel') }}</label>
-          <select
-            v-model="profileForm.locale"
-            class="w-full form-input-lg"
-          >
-            <option value="zh-CN">简体中文</option>
-            <option value="zh-TW">繁體中文</option>
-            <option value="en-US">English</option>
-          </select>
+          <div class="theme-select-wrap">
+            <select
+              v-model="profileForm.locale"
+              class="w-full form-input-lg theme-select"
+            >
+              <option value="zh-CN">简体中文</option>
+              <option value="zh-TW">繁體中文</option>
+              <option value="en-US">English</option>
+            </select>
+          </div>
         </div>
       </div>
 

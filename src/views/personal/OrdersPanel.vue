@@ -78,15 +78,17 @@
 
           <div class="w-full lg:w-56">
             <label class="mb-1 block text-xs font-semibold theme-text-muted">{{ t('orders.filters.status') }}</label>
-            <select
-              v-model="orderFilters.status"
-              class="h-11 w-full rounded-xl px-4 theme-input"
-              @change="handleOrderStatusChange"
-            >
-              <option v-for="item in orderStatusOptions" :key="item.value || 'all'" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
+            <div class="theme-select-wrap">
+              <select
+                v-model="orderFilters.status"
+                class="h-11 w-full rounded-xl px-4 theme-input theme-select"
+                @change="handleOrderStatusChange"
+              >
+                <option v-for="item in orderStatusOptions" :key="item.value || 'all'" :value="item.value">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
           </div>
 
           <div class="flex w-full flex-wrap items-center gap-2 lg:w-auto">
@@ -230,15 +232,17 @@
 
           <div class="w-full lg:w-56">
             <label class="mb-1 block text-xs font-semibold theme-text-muted">{{ t('orders.filters.status') }}</label>
-            <select
-              v-model="rechargeFilters.status"
-              class="h-11 w-full rounded-xl px-4 theme-input"
-              @change="handleRechargeStatusChange"
-            >
-              <option v-for="item in rechargeStatusOptions" :key="item.value || 'all'" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
+            <div class="theme-select-wrap">
+              <select
+                v-model="rechargeFilters.status"
+                class="h-11 w-full rounded-xl px-4 theme-input theme-select"
+                @change="handleRechargeStatusChange"
+              >
+                <option v-for="item in rechargeStatusOptions" :key="item.value || 'all'" :value="item.value">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
           </div>
 
           <div class="flex w-full flex-wrap items-center gap-2 lg:w-auto">

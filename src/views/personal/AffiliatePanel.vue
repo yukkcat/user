@@ -86,10 +86,12 @@
         </div>
         <div>
           <label class="mb-2 block text-sm font-medium theme-text-secondary">{{ t('personalCenter.affiliate.withdrawChannelLabel') }}</label>
-          <select v-if="channelOptions.length > 0" v-model="withdrawForm.channel" class="w-full form-input-lg">
-            <option value="">{{ t('personalCenter.affiliate.withdrawChannelPlaceholder') }}</option>
-            <option v-for="channel in channelOptions" :key="channel" :value="channel">{{ channel }}</option>
-          </select>
+          <div v-if="channelOptions.length > 0" class="theme-select-wrap">
+            <select v-model="withdrawForm.channel" class="w-full form-input-lg theme-select">
+              <option value="">{{ t('personalCenter.affiliate.withdrawChannelPlaceholder') }}</option>
+              <option v-for="channel in channelOptions" :key="channel" :value="channel">{{ channel }}</option>
+            </select>
+          </div>
           <input
             v-else
             v-model.trim="withdrawForm.channel"

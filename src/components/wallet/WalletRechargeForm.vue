@@ -16,17 +16,19 @@
       </div>
       <div>
         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.channelLabel') }}</label>
-        <select
-          :value="channelId"
-          @change="$emit('update:channelId', Number(($event.target as HTMLSelectElement).value))"
-          class="w-full form-input-lg"
-          :disabled="!hasChannels || channelLoading || recharging"
-        >
-          <option :value="0">{{ t('personalCenter.wallet.channelPlaceholder') }}</option>
-          <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-            {{ channel.name }}
-          </option>
-        </select>
+        <div class="theme-select-wrap">
+          <select
+            :value="channelId"
+            @change="$emit('update:channelId', Number(($event.target as HTMLSelectElement).value))"
+            class="w-full form-input-lg theme-select"
+            :disabled="!hasChannels || channelLoading || recharging"
+          >
+            <option :value="0">{{ t('personalCenter.wallet.channelPlaceholder') }}</option>
+            <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+              {{ channel.name }}
+            </option>
+          </select>
+        </div>
       </div>
       <div>
         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.remarkLabel') }}</label>

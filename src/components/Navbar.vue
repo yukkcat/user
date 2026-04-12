@@ -104,7 +104,7 @@
               :class="{ 'theme-nav-dropdown-item-active': appStore.locale === lang.code }">
               {{ lang.name }}
               <span v-if="appStore.locale === lang.code"
-                class="w-2 h-2 border theme-border bg-current"></span>
+                class="theme-nav-dropdown-check"></span>
             </button>
           </div>
         </div>
@@ -205,7 +205,7 @@
                 :class="{ 'theme-nav-dropdown-item-active': appStore.locale === lang.code }">
                 {{ lang.name }}
                 <span v-if="appStore.locale === lang.code"
-                  class="w-2 h-2 border theme-border bg-current"></span>
+                  class="theme-nav-dropdown-check"></span>
               </button>
             </div>
           </div>

@@ -478,6 +478,10 @@ html[data-telegram-mini-app="true"] body {
   }
 
   .theme-nav-menu {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 11rem;
+    padding: 0.55rem;
     border: 2px solid var(--ui-border-strong);
     border-radius: 0;
     background-color: var(--ui-bg-overlay-strong);
@@ -499,15 +503,18 @@ html[data-telegram-mini-app="true"] body {
   .theme-nav-dropdown-item {
     display: flex;
     width: 100%;
-    min-height: 2.6rem;
+    min-height: 2.75rem;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    padding: 0.6rem 0.9rem;
+    padding: 0.68rem 0.85rem;
+    border: 2px solid transparent;
+    background-color: var(--ui-bg-elevated);
+    box-shadow: none;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
-    line-height: 1;
+    line-height: 1.15;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ui-text-secondary);
@@ -515,17 +522,31 @@ html[data-telegram-mini-app="true"] body {
 
   .theme-nav-dropdown-item:hover {
     color: var(--ui-text-primary);
-    background-color: var(--ui-accent-warm);
+    border-color: var(--ui-border);
+    background-color: var(--ui-bg-soft);
   }
 
   .theme-nav-dropdown-item-active {
-    color: var(--ui-text-on-accent);
-    background-color: var(--ui-accent);
+    color: var(--ui-text-primary);
+    border-color: var(--ui-border);
+    background-color: var(--ui-accent-soft);
+    box-shadow: var(--ui-shadow-soft);
   }
 
   .theme-nav-dropdown-item-active:hover {
-    color: var(--ui-text-on-accent);
+    color: var(--ui-text-primary);
+    border-color: var(--ui-border);
+    background-color: var(--ui-accent-soft);
+  }
+
+  .theme-nav-dropdown-check {
+    display: inline-flex;
+    width: 0.95rem;
+    height: 0.95rem;
+    flex-shrink: 0;
+    border: 2px solid var(--ui-border);
     background-color: var(--ui-accent);
+    box-shadow: inset 0 0 0 2px var(--ui-bg-overlay-strong);
   }
 
   .theme-nav-badge {
@@ -715,6 +736,67 @@ html[data-telegram-mini-app="true"] body {
   .form-input-compact {
     padding: 0.55rem 0.8rem;
     font-size: 0.92rem;
+  }
+
+  .theme-select-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .theme-select-wrap::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0.45rem;
+    bottom: 0.45rem;
+    right: 2.35rem;
+    width: 2px;
+    background-color: var(--ui-border);
+    opacity: 0.16;
+  }
+
+  .theme-select-wrap::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    right: 0.95rem;
+    top: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 2px solid var(--ui-text-primary);
+    border-bottom: 2px solid var(--ui-text-primary);
+    transform: translateY(-68%) rotate(45deg);
+  }
+
+  .theme-select-wrap:focus-within::before {
+    background-color: var(--ui-accent);
+    opacity: 0.45;
+  }
+
+  .theme-select-wrap:focus-within::after {
+    border-color: var(--ui-accent);
+  }
+
+  .theme-select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 3rem !important;
+    background-image: none;
+  }
+
+  .theme-select:hover:not(:disabled) {
+    background-color: var(--ui-bg-overlay-strong);
+  }
+
+  .theme-select:disabled {
+    cursor: not-allowed;
+    color: var(--ui-text-muted);
+    background-color: var(--ui-bg-soft);
+  }
+
+  .theme-select option {
+    color: var(--ui-text-primary);
+    background-color: var(--ui-bg-overlay-strong);
   }
 
   .theme-accent-checkbox {
