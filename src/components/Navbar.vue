@@ -1,7 +1,7 @@
 <template>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 theme-panel-soft border-b theme-border backdrop-blur-md transition-all"
-    :class="scrolled ? 'py-2 theme-nav-shell-scrolled' : 'py-3'"
+    class="fixed top-0 left-0 right-0 z-50 py-3 theme-panel-soft border-b theme-border backdrop-blur-md transition-all"
+    :class="{ 'theme-nav-shell-scrolled': scrolled }"
     :style="{ transitionDuration: 'var(--ui-duration-normal)' }">
     <div class="container mx-auto px-4 flex items-center justify-between gap-4">
       <!-- Logo -->

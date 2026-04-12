@@ -1,17 +1,17 @@
 <template>
-  <div class="relative flex min-h-screen items-center justify-center theme-page theme-auth-page px-4 py-16 sm:px-6">
+  <div class="relative flex min-h-screen items-start justify-center theme-page theme-auth-page px-4 sm:px-6">
     <div class="relative z-10 w-full max-w-lg">
-      <div class="mb-4 flex items-center justify-between px-1">
+      <div class="theme-auth-topbar">
         <router-link
           to="/"
-          class="theme-nav-link rounded-full gap-1"
+          class="theme-auth-back-link"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
           {{ t('auth.login.backHome') }}
         </router-link>
-        <span class="rounded-full border theme-pill-neutral px-3 py-1 text-xs font-semibold">
+        <span class="theme-auth-kicker">
           {{ t('auth.forgot.title') }}
         </span>
       </div>

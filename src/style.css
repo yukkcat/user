@@ -593,6 +593,47 @@ html[data-telegram-mini-app="true"] body {
     padding: 1.75rem;
   }
 
+  .theme-auth-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .theme-auth-back-link,
+  .theme-auth-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    border: 2px solid var(--ui-border);
+    border-radius: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .theme-auth-back-link {
+    gap: 0.45rem;
+    padding: 0 0.85rem;
+    color: var(--ui-text-primary);
+    background-color: var(--ui-bg-elevated);
+    box-shadow: var(--ui-shadow-soft);
+  }
+
+  .theme-auth-back-link:hover {
+    background-color: var(--ui-bg-soft);
+  }
+
+  .theme-auth-kicker {
+    padding: 0 0.8rem;
+    color: var(--ui-text-secondary);
+    background-color: var(--ui-bg-soft);
+  }
+
   .theme-auth-form {
     display: grid;
     gap: 1.25rem;
@@ -860,6 +901,8 @@ html[data-telegram-mini-app="true"] body {
   .theme-auth-page {
     background: var(--ui-bg-page);
     min-height: var(--tg-viewport-stable-height);
+    padding-top: calc(6.25rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 4rem;
   }
 
   .theme-safe-bottom {
