@@ -1,5 +1,5 @@
 import { computed, ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, type RouteLocationRaw } from 'vue-router'
 import { productAPI, categoryAPI } from '../api'
 import { buildCategoryGroups, createCategoryMap, normalizeCategoryParentId, type PublicCategory } from '../utils/category'
 import { debounceAsync } from '../utils/debounce'
@@ -82,6 +82,20 @@ export function useProductList(options: UseProductListOptions = {}) {
     if (closeDrawer) {
       showFilterDrawer.value = false
     }
+  }
+
+  const replaceRoutePreservingScroll = (location: RouteLocationRaw) => {
+    if (typeof window === 'undefined') {
+      return router.replace(location)
+    }
+
+    const currentScrollY = window.scrollY
+
+    return router.replace(location).finally(() => {
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: currentScrollY, left: 0, behavior: 'auto' })
+      })
+    })
   }
 
   const loadProducts = async () => {
@@ -170,10 +184,10 @@ export function useProductList(options: UseProductListOptions = {}) {
     if (selectedCategory.value) {
       const matched = categories.value.find((category) => category.id === selectedCategory.value)
       if (matched?.slug && route.params.slug !== matched.slug) {
-        router.replace({ name: categoryRouteName, params: { slug: matched.slug } })
+        void replaceRoutePreservingScroll({ name: categoryRouteName, params: { slug: matched.slug } })
       }
     } else if (route.name === categoryRouteName) {
-      router.replace({ name: homeRouteName })
+      void replaceRoutePreservingScroll({ name: homeRouteName })
     }
   })
 

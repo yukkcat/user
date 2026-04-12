@@ -1,6 +1,6 @@
-# Dujiao-Next User Web
+# User Storefront
 
-Dujiao-Next User Web is the customer-facing frontend for browsing products, placing orders, and completing payments.
+This is the customer-facing storefront for browsing products, placing orders, and completing payments.
 
 ## Tech Stack
 
@@ -32,4 +32,4 @@ npm run build
 
 ## Online Documentation
 
-- https://dujiao-next.com
+- Add your own project documentation URL here.

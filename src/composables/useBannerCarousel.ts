@@ -29,7 +29,9 @@ export function useBannerCarousel() {
   }
 
   const bannerCount = computed(() => banners.value.length)
-  const showHeroSection = computed(() => bannerLoading.value || bannerCount.value > 0)
+  // Only render the hero section when the backend actually returns banners.
+  // This avoids showing a placeholder skeleton on stores that have no banner configured.
+  const showHeroSection = computed(() => bannerCount.value > 0)
 
   const heroBanner = computed(() => {
     if (banners.value.length === 0) return null

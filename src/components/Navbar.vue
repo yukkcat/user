@@ -1,7 +1,7 @@
 <template>
   <nav
     class="fixed top-0 left-0 right-0 z-50 theme-panel-soft border-b theme-border backdrop-blur-md transition-all"
-    :class="scrolled ? 'py-2 shadow-lg' : 'py-4'"
+    :class="scrolled ? 'py-2 theme-nav-shell-scrolled' : 'py-3'"
     :style="{ transitionDuration: 'var(--ui-duration-normal)' }">
     <div class="container mx-auto px-4 flex items-center justify-between gap-4">
       <!-- Logo -->
@@ -10,28 +10,28 @@
       </router-link>
 
       <!-- Desktop Menu -->
-      <div class="hidden lg:flex items-center space-x-1 min-w-0 overflow-x-auto scrollbar-hide">
+      <div class="theme-nav-press-room theme-nav-press-room-end hidden min-w-0 items-center space-x-1 overflow-x-auto scrollbar-hide lg:flex">
         <template v-for="item in menuItems" :key="item.key">
           <router-link v-if="item.type === 'route'" :to="item.path"
-            class="theme-nav-link text-sm relative group overflow-hidden flex items-center gap-1.5 whitespace-nowrap shrink-0"
+            class="theme-nav-link relative flex items-center whitespace-nowrap shrink-0"
             active-class="theme-nav-link-active">
             <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
             </svg>
-            <span class="relative z-10">{{ item.label.startsWith('nav.') ? t(item.label) : item.label }}</span>
+            <span>{{ item.label.startsWith('nav.') ? t(item.label) : item.label }}</span>
           </router-link>
           <a v-else :href="item.path" :target="item.target" rel="noopener noreferrer"
-            class="theme-nav-link text-sm relative group overflow-hidden flex items-center gap-1.5 whitespace-nowrap shrink-0">
+            class="theme-nav-link relative flex items-center whitespace-nowrap shrink-0">
             <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
             </svg>
-            <span class="relative z-10">{{ item.label }}</span>
+            <span>{{ item.label }}</span>
           </a>
         </template>
       </div>
 
       <!-- Right Side Actions -->
-      <div class="flex items-center shrink-0 space-x-2 lg:space-x-4">
+      <div class="theme-nav-press-room flex items-center shrink-0 gap-2">
         <!-- Cart (desktop only, mobile has bottom nav) -->
         <router-link to="/cart"
           class="hidden lg:flex theme-nav-link relative gap-2 px-3 min-w-[44px] min-h-[44px] items-center justify-center whitespace-nowrap">
@@ -39,7 +39,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.3 2.6a1 1 0 00.9 1.4H19M7 13l.4 2M10 21a1 1 0 100-2 1 1 0 000 2zm8 1a1 1 0 100-2 1 1 0 000 2z" />
           </svg>
-          <span class="text-xs font-medium">{{ t('navbar.cart') }}</span>
+          <span>{{ t('navbar.cart') }}</span>
           <span v-if="cartCount > 0"
             class="theme-nav-badge absolute -top-1 -right-1"
             :class="{ 'theme-bounce-in': cartBounce }">
@@ -69,7 +69,7 @@
           {{ t('navbar.personalCenter') }}
         </router-link>
         <button v-if="userAuthStore.isAuthenticated" @click="userAuthStore.logout()"
-          class="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-white hover:bg-red-50 dark:hover:bg-red-500/10 transition-all border border-transparent hover:border-red-200 dark:hover:border-red-500/20 text-xs font-medium whitespace-nowrap">
+          class="hidden lg:inline-flex theme-nav-link theme-nav-link-danger items-center whitespace-nowrap">
           <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
@@ -85,26 +85,26 @@
         <!-- Language Switcher (Desktop) -->
         <div class="relative group/lang lang-switcher hidden lg:block">
           <button @click="toggleLangMenu"
-            class="theme-nav-link space-x-2">
+            class="theme-nav-link">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
             </svg>
-            <span class="text-xs font-medium uppercase tracking-wider">{{ currentLocale }}</span>
+            <span>{{ currentLocale }}</span>
           </button>
 
           <!-- Dropdown -->
           <div v-if="showLangMenu"
-            class="absolute right-0 mt-2 w-40 theme-panel-strong border rounded-xl shadow-2xl py-2 z-50 overflow-hidden backdrop-blur-xl">
-            <div class="px-2 pb-2 mb-2 border-b border-gray-100 dark:border-white/5">
-              <span class="text-xs theme-text-muted font-mono px-2">{{ t('navbar.selectLanguage') }}</span>
+            class="absolute right-0 mt-2 w-40 theme-nav-menu py-2 z-50 overflow-hidden backdrop-blur-xl">
+            <div class="px-2 pb-2 mb-2 border-b theme-border">
+              <span class="theme-nav-menu-label">{{ t('navbar.selectLanguage') }}</span>
             </div>
             <button v-for="lang in languages" :key="lang.code" @click="changeLanguage(lang.code)"
-              class="w-full text-left px-4 py-2.5 text-sm theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group/item"
-              :class="{ 'theme-text-accent': appStore.locale === lang.code }">
+              class="theme-nav-dropdown-item"
+              :class="{ 'theme-nav-dropdown-item-active': appStore.locale === lang.code }">
               {{ lang.name }}
               <span v-if="appStore.locale === lang.code"
-                class="w-1.5 h-1.5 rounded-full theme-accent-stick"></span>
+                class="w-2 h-2 border theme-border bg-current"></span>
             </button>
           </div>
         </div>
@@ -150,8 +150,8 @@
         <div class="p-5 space-y-1">
           <!-- Header -->
           <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-semibold theme-text-muted uppercase tracking-wider">{{ t('navbar.more') }}</span>
-            <button @click="showMobileMenu = false" class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg theme-btn-neutral">
+            <span class="theme-nav-menu-label px-0">{{ t('navbar.more') }}</span>
+            <button @click="showMobileMenu = false" class="theme-nav-link p-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -161,7 +161,7 @@
           <!-- Navigation items not in bottom nav -->
           <template v-for="item in mobileDrawerItems" :key="item.key">
             <router-link v-if="item.type === 'route'" :to="item.path" @click="showMobileMenu = false"
-              class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center gap-3"
+              class="theme-nav-link flex w-full items-center justify-start px-4 py-3 text-left min-h-[44px]"
               active-class="theme-nav-link-active">
               <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
@@ -169,7 +169,7 @@
               {{ item.label.startsWith('nav.') ? t(item.label) : item.label }}
             </router-link>
             <a v-else :href="item.path" :target="item.target" rel="noopener noreferrer" @click="showMobileMenu = false"
-              class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center gap-3">
+              class="theme-nav-link flex w-full items-center justify-start px-4 py-3 text-left min-h-[44px]">
               <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
               </svg>
@@ -179,7 +179,7 @@
 
           <!-- Guest orders (not in bottom nav) -->
           <router-link v-if="!userAuthStore.isAuthenticated" to="/guest/orders" @click="showMobileMenu = false"
-            class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center gap-3"
+            class="theme-nav-link flex w-full items-center justify-start px-4 py-3 text-left min-h-[44px]"
             active-class="theme-nav-link-active">
             <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -189,7 +189,7 @@
 
           <!-- Logout (login/me already in bottom nav) -->
           <button v-if="userAuthStore.isAuthenticated" @click="userAuthStore.logout(); showMobileMenu = false"
-            class="w-full text-left px-4 py-3 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-medium min-h-[44px] flex items-center gap-3">
+            class="theme-nav-link theme-nav-link-danger flex w-full items-center justify-start px-4 py-3 text-left min-h-[44px]">
             <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
@@ -198,16 +198,14 @@
 
           <!-- Language Switcher -->
           <div class="mt-4 pt-4 border-t theme-border">
-            <span class="text-xs theme-text-muted font-semibold uppercase tracking-wider px-4">{{ t('navbar.selectLanguage') }}</span>
+            <span class="theme-nav-menu-label px-4">{{ t('navbar.selectLanguage') }}</span>
             <div class="mt-2 space-y-1">
               <button v-for="lang in languages" :key="lang.code" @click="changeLanguage(lang.code)"
-                class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-colors min-h-[44px] flex items-center justify-between"
-                :class="appStore.locale === lang.code
-                  ? 'theme-text-accent font-semibold'
-                  : 'theme-text-secondary hover:theme-text-primary'">
+                class="theme-nav-dropdown-item"
+                :class="{ 'theme-nav-dropdown-item-active': appStore.locale === lang.code }">
                 {{ lang.name }}
                 <span v-if="appStore.locale === lang.code"
-                  class="w-1.5 h-1.5 rounded-full theme-accent-stick"></span>
+                  class="w-2 h-2 border theme-border bg-current"></span>
               </button>
             </div>
           </div>
@@ -351,7 +349,7 @@ const cartCount = computed(() => cartStore.totalItems)
 
 const brandSiteName = computed(() => {
   const text = String(appStore.config?.brand?.site_name || '').trim()
-  return text !== '' ? text : 'Dujiao-Next'
+  return text !== '' ? text : t('common.siteName')
 })
 
 const toggleMobileMenu = () => {
@@ -407,5 +405,9 @@ onUnmounted(() => {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.theme-nav-press-room-end {
+  padding-right: var(--ui-press-distance);
 }
 </style>

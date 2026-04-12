@@ -1,27 +1,29 @@
 /**
- * 获取完整的图片 URL
- * 如果传入的是相对路径（如 /uploads/xxx.png），则拼接 API 基础 URL
- * 如果传入的是完整 URL（如 http://...），则直接返回
+ * 将图片路径解析成浏览器可直接渲染的地址。
+ * 相对 API 路径会自动补上 `VITE_API_BASE_URL`，
+ * 完整 URL、协议相对地址和内联资源则原样返回。
  */
 export function getImageUrl(path: string | undefined | null): string {
     if (!path) return ''
 
-    // 如果已经是完整 URL，直接返回
-    if (path.startsWith('http://') || path.startsWith('https://')) {
+    if (
+        path.startsWith('http://') ||
+        path.startsWith('https://') ||
+        path.startsWith('//') ||
+        path.startsWith('data:') ||
+        path.startsWith('blob:')
+    ) {
         return path
     }
 
-    // 获取 API 基础 URL
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
-
-    // 确保路径以 / 开头
     const normalizedPath = path.startsWith('/') ? path : `/${path}`
 
     return `${apiBaseUrl}${normalizedPath}`
 }
 
 /**
- * 从 images 数组中获取第一张图片的完整 URL
+ * 从商品图片结构里拿第一张图。
  */
 export function getFirstImageUrl(images: any): string {
     if (!images) return ''
