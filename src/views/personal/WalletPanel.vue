@@ -66,10 +66,7 @@ const pagination = ref({
 })
 const walletAlert = ref<PageAlert | null>(null)
 const channels = ref<any[]>([])
-const channelFetchTimer = ref<number | null>(null)
-const channelFetchSeq = ref(0)
 const channelLoading = ref(false)
-const channelsResolvedAmount = ref('')
 
 const rechargeForm = reactive({
   amount: '',
@@ -81,12 +78,6 @@ const hasChannels = computed(() => {
   const amount = rechargeForm.amount.trim()
   const amountCents = amountToCents(amount)
   if (!amount || amountCents === null || amountCents <= 0) {
-    return true
-  }
-  if (channelLoading.value) {
-    return true
-  }
-  if (channelsResolvedAmount.value !== amount) {
     return true
   }
   return channels.value.length > 0
@@ -190,59 +181,20 @@ const selectedChannelAmountHint = computed(() => {
   return getSelectedChannelAmountHint(channel, amountCents)
 })
 
-const loadPaymentChannels = async (seq: number, amount: string) => {
-  if (seq !== channelFetchSeq.value) return
-  const amountCents = amountToCents(amount)
-  if (!amount || amountCents === null || amountCents <= 0) {
-    if (seq !== channelFetchSeq.value) return
-    channels.value = []
-    channelsResolvedAmount.value = ''
-    return
-  }
-
-  try {
-    const response = await walletAPI.getPaymentChannels(amount)
-    if (seq !== channelFetchSeq.value) return
-    const list = Array.isArray(response.data.data) ? response.data.data : []
-    channels.value = normalizeChannels(list, amountCents)
-  } catch {
-    if (seq !== channelFetchSeq.value) return
-    channels.value = []
-  } finally {
-    if (seq === channelFetchSeq.value) {
-      channelsResolvedAmount.value = amount
-      channelLoading.value = false
-    }
-  }
-}
-
-const scheduleLoadPaymentChannels = () => {
+const refreshPaymentChannels = () => {
   const amount = rechargeForm.amount.trim()
   const amountCents = amountToCents(amount)
   if (!amount || amountCents === null || amountCents <= 0) {
-    channelFetchSeq.value += 1
-    if (channelFetchTimer.value) {
-      window.clearTimeout(channelFetchTimer.value)
-      channelFetchTimer.value = null
-    }
-    channelLoading.value = false
-    channelsResolvedAmount.value = ''
     channels.value = []
+    channelLoading.value = false
     return
   }
 
-  const seq = channelFetchSeq.value + 1
-  channelFetchSeq.value = seq
-  channelLoading.value = true
-
-  if (channelFetchTimer.value) {
-    window.clearTimeout(channelFetchTimer.value)
-    channelFetchTimer.value = null
-  }
-  channelFetchTimer.value = window.setTimeout(() => {
-    channelFetchTimer.value = null
-    void loadPaymentChannels(seq, amount)
-  }, 300)
+  const list = Array.isArray(appStore.config?.payment_channels)
+    ? appStore.config.payment_channels
+    : []
+  channels.value = normalizeChannels(list, amountCents)
+  channelLoading.value = false
 }
 
 const formatMoney = (amount?: string, currency?: string) => {
@@ -391,9 +343,13 @@ const initialize = async () => {
   }
 }
 
-watch(() => rechargeForm.amount, () => {
-  scheduleLoadPaymentChannels()
-}, { immediate: true })
+watch(
+  () => [rechargeForm.amount, appStore.config?.payment_channels, appStore.config?.wallet_recharge_channel_ids],
+  () => {
+    refreshPaymentChannels()
+  },
+  { deep: true, immediate: true }
+)
 
 watch(
   channels,
@@ -419,11 +375,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  channelFetchSeq.value += 1
-  if (channelFetchTimer.value) {
-    window.clearTimeout(channelFetchTimer.value)
-    channelFetchTimer.value = null
-  }
   channelLoading.value = false
 })
 </script>

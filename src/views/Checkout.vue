@@ -375,8 +375,6 @@ const previewError = ref('')
 const previewRequestId = ref(0)
 const couponRefreshing = ref(false)
 const syncingStock = ref(false)
-const orderPaymentChannels = ref<any[]>([])
-const orderPaymentChannelsRequestId = ref(0)
 
 // Payment state
 const selectedChannelId = ref<number | null>(null)
@@ -386,8 +384,9 @@ const walletBalance = ref('0')
 
 // Payment channels
 const paymentChannels = computed(() => {
-  const list = userAuthStore.isAuthenticated
-    ? orderPaymentChannels.value
+  const previewChannels = preview.value?.payment_channels
+  const list = Array.isArray(previewChannels)
+    ? previewChannels
     : appStore.config?.payment_channels
   if (!Array.isArray(list)) return []
   let filtered = list.filter((channel: any) => {
@@ -964,37 +963,6 @@ const buildOrderPayload = () => ({
   manual_form_data: buildManualFormDataPayload(),
 })
 
-const loadOrderPaymentChannels = async () => {
-  if (!userAuthStore.isAuthenticated) {
-    orderPaymentChannels.value = []
-    return
-  }
-  if (!requiresOnlineChannel.value) {
-    orderPaymentChannels.value = []
-    return
-  }
-  if (cartItems.value.length === 0 || !preview.value) {
-    orderPaymentChannels.value = []
-    return
-  }
-  const requestId = ++orderPaymentChannelsRequestId.value
-  try {
-    const response = await userOrderAPI.getPaymentChannels({
-      amount: centsToAmount(expectedOnlinePayCents.value),
-      items: buildItemsPayload(),
-    })
-    if (requestId !== orderPaymentChannelsRequestId.value) return
-    const channels = response.data.data
-    orderPaymentChannels.value = Array.isArray(channels) ? channels : []
-  } catch {
-    if (requestId !== orderPaymentChannelsRequestId.value) return
-    const fallback = preview.value?.payment_channels
-    orderPaymentChannels.value = Array.isArray(fallback) ? fallback : []
-  }
-}
-
-const debouncedLoadOrderPaymentChannels = debounceAsync(loadOrderPaymentChannels, 250)
-
 const syncCartStockSnapshots = async () => {
   if (isBuyNowMode.value) return
   if (syncingStock.value) return
@@ -1009,35 +977,30 @@ const syncCartStockSnapshots = async () => {
 const loadPreview = async () => {
   if (syncingStock.value) {
     preview.value = null
-    orderPaymentChannels.value = []
     previewError.value = ''
     couponRefreshing.value = false
     return
   }
   if (cartItems.value.length === 0) {
     preview.value = null
-    orderPaymentChannels.value = []
     previewError.value = ''
     couponRefreshing.value = false
     return
   }
   if (isGuestCheckout.value && (!guestEmail.value.trim() || !guestPassword.value.trim() || !guestEmailValid.value)) {
     preview.value = null
-    orderPaymentChannels.value = []
     previewError.value = ''
     couponRefreshing.value = false
     return
   }
   if (!manualFormValidation.value.valid) {
     preview.value = null
-    orderPaymentChannels.value = []
     previewError.value = ''
     couponRefreshing.value = false
     return
   }
   if (cartItems.value.some((item) => itemStockExceeded(item))) {
     preview.value = null
-    orderPaymentChannels.value = []
     previewError.value = ''
     couponRefreshing.value = false
     return
@@ -1063,15 +1026,9 @@ const loadPreview = async () => {
 
     if (requestId !== previewRequestId.value) return
     preview.value = response.data.data
-    if (userAuthStore.isAuthenticated) {
-      debouncedLoadOrderPaymentChannels()
-    } else {
-      orderPaymentChannels.value = []
-    }
   } catch (err: any) {
     if (requestId !== previewRequestId.value) return
     preview.value = null
-    orderPaymentChannels.value = []
     previewError.value = err.message || t('checkout.previewFailed')
   } finally {
     if (requestId === previewRequestId.value) {
@@ -1085,7 +1042,6 @@ const debouncedLoadPreview = debounceAsync(loadPreview, 300)
 
 const loadPreviewNow = async () => {
   debouncedLoadPreview.cancel()
-  debouncedLoadOrderPaymentChannels.cancel()
   await loadPreview()
 }
 
@@ -1184,13 +1140,6 @@ watch(normalizedCouponCode, (value, previous) => {
 })
 
 watch(
-  () => [userAuthStore.isAuthenticated, requiresOnlineChannel.value, expectedOnlinePayCents.value, preview.value?.total_amount],
-  () => {
-    debouncedLoadOrderPaymentChannels()
-  }
-)
-
-watch(
   () => [paymentChannels.value, expectedOnlinePayCents.value, requiresOnlineChannel.value],
   () => {
     if (!selectedChannelId.value) return
@@ -1226,7 +1175,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   debouncedLoadPreview.cancel()
-  debouncedLoadOrderPaymentChannels.cancel()
 })
 
 const cartItemKey = (item: CartItem) => `${item.productId}:${normalizeSkuId(item.skuId)}`

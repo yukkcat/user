@@ -503,9 +503,6 @@ const redirectTimer = ref<number | null>(null)
 const walletLoading = ref(false)
 const walletBalance = ref('0')
 const useBalance = ref(false)
-const orderPaymentChannels = ref<any[]>([])
-const orderPaymentChannelsLoaded = ref(false)
-const orderPaymentChannelsRequestId = ref(0)
 
 const routeQueryValueToString = (value: unknown): string => {
   if (Array.isArray(value)) {
@@ -593,11 +590,8 @@ const filterChannelsByOrder = (list: any[]) => {
   return filtered
 }
 
-const configReady = computed(() => !appStore.loading && (!!appStore.config || (!isGuest.value && orderPaymentChannelsLoaded.value)))
+const configReady = computed(() => !appStore.loading && !!appStore.config)
 const channels = computed(() => {
-  if (!isGuest.value && orderPaymentChannelsLoaded.value) {
-    return filterChannelsByOrder(orderPaymentChannels.value)
-  }
   const fallback = appStore.config?.payment_channels
   return filterChannelsByOrder(Array.isArray(fallback) ? fallback : [])
 })
@@ -925,49 +919,6 @@ const paymentOnlinePayDisplay = computed(() => {
   return formatMoney(String(paymentResult.value.online_pay_amount), order.value?.currency)
 })
 
-const loadOrderPaymentChannels = async () => {
-  if (isGuest.value) {
-    orderPaymentChannels.value = []
-    orderPaymentChannelsLoaded.value = false
-    return
-  }
-  if (!orderNoResolved.value) {
-    orderPaymentChannels.value = []
-    orderPaymentChannelsLoaded.value = false
-    return
-  }
-  if (!requiresOnlineChannel.value) {
-    orderPaymentChannels.value = []
-    orderPaymentChannelsLoaded.value = true
-    return
-  }
-  const amount = centsToAmount(expectedOnlinePayCents.value)
-  const amountCents = amountToCents(amount)
-  if (amountCents === null || amountCents <= 0) {
-    orderPaymentChannels.value = []
-    orderPaymentChannelsLoaded.value = true
-    return
-  }
-
-  const requestID = ++orderPaymentChannelsRequestId.value
-  try {
-    const response = await userOrderAPI.getPaymentChannels({
-      order_no: orderNoResolved.value,
-      amount,
-    })
-    if (requestID !== orderPaymentChannelsRequestId.value) return
-    const channels = response.data.data
-    orderPaymentChannels.value = Array.isArray(channels) ? channels : []
-    orderPaymentChannelsLoaded.value = true
-  } catch {
-    if (requestID !== orderPaymentChannelsRequestId.value) return
-    orderPaymentChannels.value = []
-    orderPaymentChannelsLoaded.value = false
-  }
-}
-
-const debouncedLoadOrderPaymentChannels = debounceAsync(loadOrderPaymentChannels, 250)
-
 const loadWallet = async () => {
   if (isGuest.value) return
   walletLoading.value = true
@@ -995,8 +946,6 @@ const loadOrder = async (options?: { silent?: boolean }) => {
       }
       if (!orderNoQuery.value) {
         order.value = null
-        orderPaymentChannels.value = []
-        orderPaymentChannelsLoaded.value = false
         return
       }
       const response = await guestOrderAPI.detail(orderNoQuery.value, {
@@ -1008,8 +957,6 @@ const loadOrder = async (options?: { silent?: boolean }) => {
     } else {
       if (!orderNoQuery.value) {
         order.value = null
-        orderPaymentChannels.value = []
-        orderPaymentChannelsLoaded.value = false
         return
       }
       const response = await userOrderAPI.detail(orderNoQuery.value, { silentBusinessError: true })
@@ -1018,8 +965,6 @@ const loadOrder = async (options?: { silent?: boolean }) => {
   } catch (err) {
     if (!silent) {
       order.value = null
-      orderPaymentChannels.value = []
-      orderPaymentChannelsLoaded.value = false
       if (isGuest.value) {
         guestAuthError.value = t('payment.guestAuthInvalid')
       }
@@ -1560,14 +1505,6 @@ watch(
 )
 
 watch(
-  () => [isGuest.value, orderNoResolved.value, requiresOnlineChannel.value, expectedOnlinePayCents.value, order.value?.status],
-  () => {
-    void debouncedLoadOrderPaymentChannels()
-  },
-  { immediate: true }
-)
-
-watch(
   () => [paymentResult.value?.payment_id, route.fullPath, order.value?.status],
   () => {
     void capturePaypalIfNeeded()
@@ -1615,7 +1552,6 @@ onUnmounted(() => {
     copiedTimer.value = null
   }
   debouncedLoadOrder.cancel()
-  debouncedLoadOrderPaymentChannels.cancel()
 })
 
 const handleGuestAuthSubmit = async () => {
@@ -1635,7 +1571,6 @@ const handleRefresh = async () => {
   await Promise.all([
     debouncedLoadOrder(),
     loadWallet(),
-    debouncedLoadOrderPaymentChannels(),
   ])
 }
 </script>
