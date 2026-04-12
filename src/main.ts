@@ -7,6 +7,20 @@ import router, { warmupCommonRoutes } from './router'
 import i18n from './i18n'
 import { useTelegramMiniAppStore } from './stores/telegramMiniApp'
 
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual'
+}
+
+const resetInitialScrollPosition = () => {
+  if (typeof window === 'undefined' || window.location.hash) {
+    return
+  }
+
+  window.requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  })
+}
+
 console.log(
   '%c Dujiao-Next %c Digital Commerce Platform %c',
   'background:#0071e3;color:#fff;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:bold;',
@@ -29,6 +43,7 @@ app.use(i18n)
 
 useTelegramMiniAppStore(pinia).init().then(() => {
   app.mount('#app')
+  resetInitialScrollPosition()
 })
 
 void router.isReady().then(() => {
