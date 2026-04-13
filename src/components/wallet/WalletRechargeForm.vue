@@ -16,19 +16,12 @@
       </div>
       <div>
         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.channelLabel') }}</label>
-        <div class="theme-select-wrap">
-          <select
-            :value="channelId"
-            @change="$emit('update:channelId', Number(($event.target as HTMLSelectElement).value))"
-            class="w-full form-input-lg theme-select"
-            :disabled="!hasChannels || channelLoading || recharging"
-          >
-            <option :value="0">{{ t('personalCenter.wallet.channelPlaceholder') }}</option>
-            <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-              {{ channel.name }}
-            </option>
-          </select>
-        </div>
+        <ThemeSelect
+          :model-value="channelId"
+          :options="channelOptions"
+          :disabled="!hasChannels || channelLoading || recharging"
+          @update:modelValue="$emit('update:channelId', Number($event))"
+        />
       </div>
       <div>
         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.remarkLabel') }}</label>
@@ -74,9 +67,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ThemeSelect from '../ThemeSelect.vue'
 
-defineProps<{
+const props = defineProps<{
   amount: string
   channelId: number
   remark: string
@@ -98,4 +93,12 @@ defineEmits<{
 }>()
 
 const { t } = useI18n()
+
+const channelOptions = computed(() => [
+  { value: 0, label: t('personalCenter.wallet.channelPlaceholder') },
+  ...props.channels.map((channel) => ({
+    value: channel.id,
+    label: channel.name,
+  })),
+])
 </script>

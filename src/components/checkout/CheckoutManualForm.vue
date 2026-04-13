@@ -28,16 +28,13 @@
               :placeholder="getManualFieldPlaceholder(field)"
             />
 
-            <div v-else-if="field.type === 'select'" class="theme-select-wrap">
-              <select
-                :value="getFieldValue(manualItem.itemKey, field.key)"
-                @change="updateFieldValue(manualItem.itemKey, field.key, ($event.target as HTMLSelectElement).value)"
-                class="w-full form-input-compact theme-select"
-              >
-                <option value="">{{ t('checkout.manualFormSelectPlaceholder') }}</option>
-                <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
-              </select>
-            </div>
+            <ThemeSelect
+              v-else-if="field.type === 'select'"
+              :model-value="getFieldValue(manualItem.itemKey, field.key)"
+              :options="buildFieldOptions(field.options)"
+              size="compact"
+              @update:modelValue="updateFieldValue(manualItem.itemKey, field.key, $event)"
+            />
 
             <div v-else-if="field.type === 'radio'" class="space-y-2 rounded-xl border theme-surface-soft p-3">
               <label v-for="option in field.options" :key="option" class="flex items-center gap-2 text-sm theme-text-secondary">
@@ -90,6 +87,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import ThemeSelect from '../ThemeSelect.vue'
 import { useLocalized } from '../../composables/useProduct'
 
 interface ManualFormField {
@@ -138,6 +136,11 @@ const manualItemTitle = (manualItem: ManualFormProduct) => {
 const getFieldValue = (itemKey: string, fieldKey: string) => {
   return props.modelValue[itemKey]?.[fieldKey] ?? ''
 }
+
+const buildFieldOptions = (options: string[]) => [
+  { value: '', label: t('checkout.manualFormSelectPlaceholder') },
+  ...options.map((option) => ({ value: option, label: option })),
+]
 
 const updateFieldValue = (itemKey: string, fieldKey: string, value: any) => {
   const updated = { ...props.modelValue }

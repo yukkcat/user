@@ -86,12 +86,11 @@
         </div>
         <div>
           <label class="mb-2 block text-sm font-medium theme-text-secondary">{{ t('personalCenter.affiliate.withdrawChannelLabel') }}</label>
-          <div v-if="channelOptions.length > 0" class="theme-select-wrap">
-            <select v-model="withdrawForm.channel" class="w-full form-input-lg theme-select">
-              <option value="">{{ t('personalCenter.affiliate.withdrawChannelPlaceholder') }}</option>
-              <option v-for="channel in channelOptions" :key="channel" :value="channel">{{ channel }}</option>
-            </select>
-          </div>
+          <ThemeSelect
+            v-if="channelOptions.length > 0"
+            v-model="withdrawForm.channel"
+            :options="withdrawChannelOptions"
+          />
           <input
             v-else
             v-model.trim="withdrawForm.channel"
@@ -254,6 +253,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ThemeSelect from '../../components/ThemeSelect.vue'
 import { affiliateAPI, type AffiliateCommissionData, type AffiliateDashboardData, type AffiliateWithdrawData } from '../../api'
 import {
   AFFILIATE_COMMISSION_STATUS_AVAILABLE,
@@ -306,6 +306,14 @@ const channelOptions = computed(() => {
   if (!Array.isArray(channels)) return []
   return channels.map((item: any) => String(item || '').trim()).filter(Boolean)
 })
+
+const withdrawChannelOptions = computed(() => [
+  { value: '', label: t('personalCenter.affiliate.withdrawChannelPlaceholder') },
+  ...channelOptions.value.map((channel) => ({
+    value: channel,
+    label: channel,
+  })),
+])
 
 const promotionUrl = computed(() => {
   if (!dashboard.value?.affiliate_code) return '-'
