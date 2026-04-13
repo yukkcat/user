@@ -1,8 +1,8 @@
 <template>
   <div
-    class="group relative theme-panel rounded-none border transition-all overflow-hidden flex flex-row items-center cursor-pointer theme-slide-up"
+    class="group product-list-hover relative theme-panel rounded-none border overflow-hidden flex flex-row items-center cursor-pointer theme-slide-up"
     :class="isSoldOut(product)
-      ? 'opacity-[0.85] grayscale-[0.2] saturate-50 border-rose-300/60 dark:border-rose-900/40'
+      ? 'product-list-hover-disabled opacity-[0.85] grayscale-[0.2] saturate-50 border-rose-300/60 dark:border-rose-900/40'
       : 'theme-card-interactive'"
     :style="{ animationDelay: `${index * animationStep}ms` }"
     @click="$emit('click', product.slug)">
@@ -145,3 +145,21 @@ const {
 const shouldShowStockBadge = (product: any) =>
   product?.stock_status === 'low_stock' || product?.stock_status === 'out_of_stock'
 </script>
+
+<style scoped>
+.product-list-hover {
+  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+
+.product-list-hover:hover {
+  transform: translate(-2px, -2px);
+  border-color: var(--ui-accent);
+  background-color: var(--ui-bg-overlay-strong);
+}
+
+.product-list-hover-disabled:hover {
+  transform: none;
+  border-color: inherit;
+  background-color: inherit;
+}
+</style>
