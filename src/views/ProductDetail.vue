@@ -60,7 +60,7 @@
             <!-- Product Info (Right) -->
             <div class="p-6 md:p-8 lg:p-12 flex flex-col justify-center">
               <div class="mb-6">
-                <div v-if="categoryName" class="mb-3 text-xs uppercase tracking-wider theme-text-muted">
+                <div v-if="categoryName" class="mb-3 text-sm font-medium theme-text-muted">
                   {{ t('productDetail.categoryLabel') }} · {{ categoryName }}
                 </div>
 
@@ -209,7 +209,7 @@
                 </div>
 
                 <div v-if="activeSkus.length" class="mb-8">
-                  <h2 class="mb-3 text-sm font-bold uppercase tracking-widest theme-text-muted">
+                  <h2 class="mb-3 text-sm font-semibold theme-text-muted">
                     {{ t('productDetail.skuTitle') }}
                   </h2>
                   <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -239,19 +239,19 @@
                   </p>
                 </div>
 
-                <div class="mb-8">
-                  <h2 class="mb-3 text-sm font-bold uppercase tracking-widest theme-text-muted">
+                <div v-if="productDescription" class="mb-8">
+                  <h2 class="mb-3 text-sm font-semibold theme-text-muted">
                     {{ t('productDetail.description') }}
                   </h2>
                   <p class="text-lg leading-relaxed theme-text-secondary">
-                    {{ getLocalizedText(product.description) }}
+                    {{ productDescription }}
                   </p>
                 </div>
               </div>
 
               <!-- Quantity Selector -->
                 <div class="mb-8">
-                  <h2 class="mb-3 text-sm font-bold uppercase tracking-widest theme-text-muted">
+                  <h2 class="mb-3 text-sm font-semibold theme-text-muted">
                     {{ t('productDetail.quantity') }}
                   </h2>
                   <div class="flex items-center rounded-lg border theme-border overflow-hidden w-fit">
@@ -602,6 +602,10 @@ const cannotPurchaseReason = computed(() => {
 const categoryName = computed(() => {
   const category = product.value?.category?.name
   return category ? getLocalizedText(category) : ''
+})
+
+const productDescription = computed(() => {
+  return getLocalizedText(product.value?.description).trim()
 })
 
 const images = computed(() => {

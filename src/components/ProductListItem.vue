@@ -39,7 +39,7 @@
     </div>
 
     <div class="flex-1 min-w-0 py-2 pr-1 sm:pr-2 flex flex-col justify-center gap-1">
-      <div v-if="product.category?.name" class="text-[10px] sm:text-[11px] theme-text-muted uppercase tracking-[0.16em] truncate">
+      <div v-if="product.category?.name" class="text-[10px] sm:text-[11px] font-medium theme-text-muted truncate">
         {{ getLocalizedText(product.category.name) }}
       </div>
 

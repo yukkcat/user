@@ -9,7 +9,7 @@
                 <span class="text-sm font-black text-white">{{ brandInitial }}</span>
               </div>
               <div class="min-w-0">
-                <p class="text-[11px] font-bold uppercase tracking-[0.18em] theme-text-muted">
+                <p class="text-[11px] font-semibold theme-text-muted">
                   {{ t('common.siteName') }}
                 </p>
                 <h3 class="truncate text-xl font-black tracking-tight theme-text-primary">

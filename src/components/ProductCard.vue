@@ -50,7 +50,7 @@
     <div class="p-3 md:p-4 relative z-20 flex flex-col flex-1">
       <div
         v-if="product.category?.name"
-        class="mb-1.5 md:mb-2 text-[11px] md:text-xs theme-text-muted uppercase tracking-[0.18em] truncate">
+        class="mb-1.5 md:mb-2 text-[11px] md:text-xs font-medium theme-text-muted truncate">
         {{ getLocalizedText(product.category.name) }}
       </div>
 
@@ -81,7 +81,7 @@
 
       <div class="flex items-center justify-between border-t theme-border pt-3 md:pt-4 mt-auto gap-3">
         <div class="flex flex-col min-w-0">
-          <span class="hidden md:block text-[11px] theme-text-muted uppercase tracking-[0.18em]">
+          <span class="hidden md:block text-[11px] font-medium theme-text-muted">
             {{ t('products.price') }}
           </span>
           <span v-if="hasPromotionPrice(product)" class="theme-price-sm theme-price-promotion">
@@ -116,7 +116,7 @@
           </button>
 
           <span
-            class="hidden md:flex text-[11px] uppercase font-bold tracking-[0.18em] items-center gap-1 transition-colors"
+            class="hidden md:flex text-[11px] font-semibold items-center gap-1 transition-colors"
             :class="isSoldOut(product)
               ? 'text-rose-500/90 dark:text-rose-300/90'
               : 'theme-text-muted'">

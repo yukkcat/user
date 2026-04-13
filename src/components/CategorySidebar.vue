@@ -49,7 +49,7 @@
 
         <!-- Search in drawer (only for Products page mode) -->
         <div v-if="showSearch" class="mb-6">
-          <label class="text-xs font-semibold uppercase tracking-wider theme-text-muted">
+          <label class="text-xs font-semibold theme-text-muted">
             {{ t('products.searchLabel') }}
           </label>
           <div class="mt-3 flex items-center gap-2">
@@ -129,7 +129,7 @@
     <div class="theme-panel backdrop-blur-xl border rounded-2xl sticky top-24" :class="compact ? 'p-5' : 'p-6'">
       <!-- Search (desktop, only for Products page) -->
       <div v-if="showSearch" :class="compact ? 'mb-4' : 'mb-6'">
-        <label class="text-xs font-semibold uppercase tracking-wider theme-text-muted">
+        <label class="text-xs font-semibold theme-text-muted">
           {{ t('products.searchLabel') }}
         </label>
         <div class="mt-3 flex items-center gap-2">

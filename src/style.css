@@ -4,7 +4,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --ui-font-sans: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ui-font-data: var(--ui-font-sans);
+  font-family: var(--ui-font-sans);
   line-height: 1.5;
   font-weight: 400;
 
@@ -135,8 +137,9 @@ html[data-telegram-mini-app="true"] body {
   h4,
   h5,
   h6 {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    text-transform: uppercase;
+    font-family: var(--ui-font-sans);
+    font-weight: 800;
+    text-transform: none;
   }
 
   h1 {
@@ -329,11 +332,11 @@ html[data-telegram-mini-app="true"] body {
     border: 2px solid var(--ui-border-strong);
     border-radius: 0;
     box-shadow: var(--ui-shadow-1);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-weight: 700;
     font-size: 0.78rem;
     line-height: 1;
-    text-transform: uppercase;
+    text-transform: none;
     letter-spacing: 0.05em;
   }
 
@@ -389,10 +392,11 @@ html[data-telegram-mini-app="true"] body {
     border: 2px solid var(--ui-border);
     background-color: var(--ui-bg-soft);
     color: var(--ui-text-primary);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    font-variant-numeric: tabular-nums;
   }
 
   .theme-btn-primary:active,
@@ -434,12 +438,12 @@ html[data-telegram-mini-app="true"] body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-size: 1rem;
     font-weight: 800;
     letter-spacing: 0.06em;
     line-height: 1;
-    text-transform: uppercase;
+    text-transform: none;
   }
 
   .theme-nav-link {
@@ -491,12 +495,12 @@ html[data-telegram-mini-app="true"] body {
   .theme-nav-menu-label {
     display: block;
     padding: 0 0.75rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     line-height: 1;
-    text-transform: uppercase;
+    text-transform: none;
     color: var(--ui-text-muted);
   }
 
@@ -511,12 +515,12 @@ html[data-telegram-mini-app="true"] body {
     border: 2px solid transparent;
     background-color: var(--ui-bg-elevated);
     box-shadow: none;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-size: 0.76rem;
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: 0.05em;
-    text-transform: uppercase;
+    text-transform: none;
     color: var(--ui-text-secondary);
   }
 
@@ -558,19 +562,21 @@ html[data-telegram-mini-app="true"] body {
     background-color: var(--ui-accent);
     color: var(--ui-text-on-accent);
     padding: 0.1rem 0.3rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-data);
     font-size: 0.65rem;
     font-weight: 800;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
     box-shadow: var(--ui-shadow-soft);
   }
 
   .theme-section-heading {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-weight: 800;
     letter-spacing: -0.015em;
     line-height: var(--ui-leading-display);
-    text-transform: uppercase;
+    text-transform: none;
   }
 
   .theme-step-chip {
@@ -629,12 +635,12 @@ html[data-telegram-mini-app="true"] body {
     min-height: 2.25rem;
     border: 2px solid var(--ui-border);
     border-radius: 0;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-size: 0.74rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: 0.05em;
-    text-transform: uppercase;
+    text-transform: none;
   }
 
   .theme-auth-back-link {
@@ -999,10 +1005,10 @@ html[data-telegram-mini-app="true"] body {
     align-items: center;
     border: 2px solid var(--ui-border);
     border-radius: 0;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
     font-weight: 800;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
+    text-transform: none;
     line-height: 1;
   }
 
@@ -1071,7 +1077,7 @@ html[data-telegram-mini-app="true"] body {
 
   .theme-prose :where(h1, h2, h3, h4, h5, h6, strong) {
     color: var(--ui-text-primary);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-sans);
   }
 
   .theme-prose :where(p, li, blockquote) {
@@ -1097,10 +1103,12 @@ html[data-telegram-mini-app="true"] body {
 
   .theme-price-lg,
   .theme-price-sm {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--ui-font-data);
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
     color: var(--ui-price-primary);
   }
 
