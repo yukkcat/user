@@ -71,8 +71,8 @@
             <button @click="$emit('selectCategory', null, true)"
               class="w-full text-left px-4 py-3 rounded-xl transition-all duration-300 border min-h-[44px]"
               :class="selectedCategory === null
-                ? 'theme-btn-primary border border-transparent'
-                : 'border-transparent theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'">
+                ? 'theme-filter-item-active'
+                : 'theme-filter-item'">
               {{ t('products.allCategories') }}
             </button>
           </li>
@@ -82,8 +82,8 @@
                 <button @click="$emit('selectCategory', group.id, true)"
                   class="flex-1 min-w-0 text-left px-4 py-3 rounded-xl transition-all duration-300 border flex items-center gap-2 min-h-[44px]"
                   :class="selectedCategory === group.id
-                    ? 'theme-btn-primary border border-transparent'
-                    : 'border-transparent theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'">
+                    ? 'theme-filter-item-active'
+                    : 'theme-filter-item'">
                   <img v-if="group.icon" :src="getImageUrl(group.icon)"
                     :alt="getLocalizedText(group.name)"
                     loading="lazy" class="h-5 w-5 rounded object-cover" />
@@ -92,8 +92,8 @@
                 <button
                   v-if="group.children.length > 0"
                   type="button"
-                  class="h-10 w-10 shrink-0 self-center rounded-full border flex items-center justify-center shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
-                  :class="expandedParentIds.includes(group.id) ? 'theme-btn-primary border-transparent' : 'theme-panel-soft theme-text-muted hover:text-gray-900 dark:hover:text-white'"
+                  class="h-10 w-10 shrink-0 self-center border flex items-center justify-center transition-colors duration-200"
+                  :class="expandedParentIds.includes(group.id) ? 'theme-filter-toggle-active' : 'theme-filter-toggle'"
                   @click.stop="$emit('toggleParent', group.id)"
                 >
                   <svg class="w-4 h-4 transition-transform duration-200"
@@ -108,8 +108,8 @@
                   <button @click="$emit('selectCategory', child.id, true)"
                     class="w-full text-left px-4 py-3 rounded-xl transition-all duration-300 border flex items-center gap-2 min-h-[44px]"
                     :class="selectedCategory === child.id
-                      ? 'theme-btn-primary border border-transparent'
-                      : 'border-transparent theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'">
+                      ? 'theme-filter-item-active'
+                      : 'theme-filter-item'">
                     <img v-if="child.icon" :src="getImageUrl(child.icon)"
                       :alt="getLocalizedText(child.name)"
                       loading="lazy" class="h-5 w-5 rounded object-cover" />
@@ -156,8 +156,8 @@
             :class="[
               compact ? 'px-3 py-2.5 text-sm' : 'px-4 py-3',
               selectedCategory === null
-                ? 'theme-btn-primary border border-transparent'
-                : 'border-transparent theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+                ? 'theme-filter-item-active'
+                : 'theme-filter-item'
             ]">
             {{ t('products.allCategories') }}
           </button>
@@ -170,8 +170,8 @@
                 :class="[
                   compact ? 'px-3 py-2.5 text-sm' : 'px-4 py-3',
                   selectedCategory === group.id
-                    ? 'theme-btn-primary border border-transparent'
-                    : 'border-transparent theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+                    ? 'theme-filter-item-active'
+                    : 'theme-filter-item'
                 ]">
                 <img v-if="group.icon" :src="getImageUrl(group.icon)"
                   :alt="getLocalizedText(group.name)"
@@ -182,10 +182,10 @@
               <button
                 v-if="group.children.length > 0"
                 type="button"
-                class="shrink-0 self-center rounded-full border flex items-center justify-center shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                class="shrink-0 self-center border flex items-center justify-center transition-colors duration-200"
                 :class="[
                   compact ? 'h-9 w-9' : 'h-10 w-10',
-                  expandedParentIds.includes(group.id) ? 'theme-btn-primary border-transparent' : 'theme-panel-soft theme-text-muted hover:text-gray-900 dark:hover:text-white'
+                  expandedParentIds.includes(group.id) ? 'theme-filter-toggle-active' : 'theme-filter-toggle'
                 ]"
                 @click.stop="$emit('toggleParent', group.id)"
               >
@@ -207,8 +207,8 @@
                   :class="[
                     compact ? 'px-3 py-2.5 text-sm' : 'px-4 py-3',
                     selectedCategory === child.id
-                      ? 'theme-btn-primary border border-transparent'
-                      : 'border-transparent theme-text-secondary hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+                      ? 'theme-filter-item-active'
+                      : 'theme-filter-item'
                   ]">
                   <img v-if="child.icon" :src="getImageUrl(child.icon)"
                     :alt="getLocalizedText(child.name)"

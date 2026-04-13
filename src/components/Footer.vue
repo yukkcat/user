@@ -1,6 +1,6 @@
 <template>
   <footer class="relative overflow-hidden border-t theme-border theme-panel-strong">
-    <div class="container mx-auto px-4 py-12 md:py-14">
+    <div class="container mx-auto px-4 pt-12 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:py-14">
       <div class="border-b theme-border pb-8">
         <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div class="max-w-2xl space-y-4">
