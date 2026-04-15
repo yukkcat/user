@@ -411,7 +411,7 @@ html[data-telegram-mini-app="true"] body {
     background-color: var(--ui-bg-soft);
     color: var(--ui-text-primary);
     font-family: var(--ui-font-sans);
-    font-weight: 700;
+    font-weight: 500 !important;
     letter-spacing: 0.01em;
     text-transform: none;
     font-variant-numeric: tabular-nums;
@@ -1028,7 +1028,7 @@ html[data-telegram-mini-app="true"] body {
     background-color: var(--ui-badge-neutral-bg);
     color: var(--ui-badge-text);
     font-family: var(--ui-font-sans);
-    font-weight: 600;
+    font-weight: 500 !important;
     letter-spacing: 0.01em;
     text-transform: none;
     line-height: 1.1;
