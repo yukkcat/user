@@ -90,7 +90,7 @@ interface FooterLink {
 }
 
 interface ContactLink {
-  label: 'Telegram' | 'WhatsApp'
+  label: 'Telegram'
   href: string
 }
 
@@ -138,12 +138,8 @@ const contactLinks = computed<ContactLink[]>(() => {
   const telegram = typeof config.value?.contact?.telegram === 'string'
     ? config.value.contact.telegram.trim()
     : ''
-  const whatsapp = typeof config.value?.contact?.whatsapp === 'string'
-    ? config.value.contact.whatsapp.trim()
-    : ''
 
   if (telegram) items.push({ label: 'Telegram', href: telegram })
-  if (whatsapp) items.push({ label: 'WhatsApp', href: whatsapp })
 
   return items
 })
