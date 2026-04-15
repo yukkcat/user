@@ -49,6 +49,15 @@
   --ui-price-promotion: #d94f3d;
   --ui-price-original: #696d7d;
   --ui-grid-line: rgba(26, 28, 44, 0.05);
+  --ui-badge-border: rgba(26, 28, 44, 0.16);
+  --ui-badge-text: #52576a;
+  --ui-badge-neutral-bg: rgba(245, 237, 220, 0.78);
+  --ui-badge-accent-bg: rgba(239, 213, 183, 0.76);
+  --ui-badge-accent-text: #bf4d3e;
+  --ui-badge-success-bg: rgba(216, 225, 184, 0.76);
+  --ui-badge-warning-bg: rgba(242, 225, 182, 0.8);
+  --ui-badge-danger-bg: rgba(239, 177, 169, 0.56);
+  --ui-badge-info-bg: rgba(208, 220, 235, 0.78);
   --ui-duration-fast: 0ms;
   --ui-duration-normal: 0ms;
   --ui-duration-slow: 0ms;
@@ -113,6 +122,15 @@
   --ui-price-promotion: #f08a7d;
   --ui-price-original: #aaa48e;
   --ui-grid-line: rgba(247, 244, 232, 0.06);
+  --ui-badge-border: rgba(247, 244, 232, 0.18);
+  --ui-badge-text: #d7cfbb;
+  --ui-badge-neutral-bg: rgba(36, 42, 59, 0.92);
+  --ui-badge-accent-bg: rgba(76, 63, 43, 0.88);
+  --ui-badge-accent-text: #f0c3b3;
+  --ui-badge-success-bg: rgba(70, 87, 39, 0.88);
+  --ui-badge-warning-bg: rgba(92, 74, 33, 0.9);
+  --ui-badge-danger-bg: rgba(95, 47, 46, 0.9);
+  --ui-badge-info-bg: rgba(29, 56, 77, 0.9);
 }
 
 html,
@@ -212,7 +230,7 @@ html[data-telegram-mini-app="true"] body {
   .theme-auth-card,
   .theme-personal-card {
     border: 2px solid var(--ui-border);
-    border-radius: 0;
+    border-radius: 2px;
   }
 
   .theme-panel {
@@ -330,7 +348,7 @@ html[data-telegram-mini-app="true"] body {
     align-items: center;
     justify-content: center;
     border: 2px solid var(--ui-border-strong);
-    border-radius: 0;
+    border-radius: 2px;
     box-shadow: var(--ui-shadow-1);
     font-family: var(--ui-font-sans);
     font-weight: 700;
@@ -487,7 +505,7 @@ html[data-telegram-mini-app="true"] body {
     min-width: 11rem;
     padding: 0.55rem;
     border: 2px solid var(--ui-border-strong);
-    border-radius: 0;
+    border-radius: 2px;
     background-color: var(--ui-bg-overlay-strong);
     box-shadow: var(--ui-shadow-2);
   }
@@ -634,7 +652,7 @@ html[data-telegram-mini-app="true"] body {
     align-items: center;
     min-height: 2.25rem;
     border: 2px solid var(--ui-border);
-    border-radius: 0;
+    border-radius: 2px;
     font-family: var(--ui-font-sans);
     font-size: 0.74rem;
     font-weight: 700;
@@ -702,7 +720,7 @@ html[data-telegram-mini-app="true"] body {
   .theme-filter-item,
   .theme-filter-item-active {
     border-width: 2px;
-    border-radius: 0;
+    border-radius: 2px;
     box-shadow: none;
     font-family: inherit;
     font-size: 0.95rem;
@@ -734,7 +752,7 @@ html[data-telegram-mini-app="true"] body {
   .theme-filter-toggle,
   .theme-filter-toggle-active {
     border: 2px solid var(--ui-border);
-    border-radius: 0;
+    border-radius: 2px;
     box-shadow: none;
     background-color: var(--ui-bg-elevated);
     color: var(--ui-text-muted);
@@ -813,7 +831,7 @@ html[data-telegram-mini-app="true"] body {
     justify-content: space-between;
     gap: 0.75rem;
     border: 2px solid var(--ui-border);
-    border-radius: 0;
+    border-radius: 2px;
     background-color: var(--ui-bg-elevated);
     color: var(--ui-text-primary);
     text-align: left;
@@ -900,7 +918,7 @@ html[data-telegram-mini-app="true"] body {
     overflow-y: auto;
     overscroll-behavior: contain;
     border: 2px solid var(--ui-border);
-    border-radius: 0;
+    border-radius: 2px;
     background-color: var(--ui-bg-overlay-strong);
     padding: 0.55rem;
   }
@@ -1003,13 +1021,17 @@ html[data-telegram-mini-app="true"] body {
   .theme-badge-xs {
     display: inline-flex;
     align-items: center;
-    border: 2px solid var(--ui-border);
-    border-radius: 0;
+    justify-content: center;
+    gap: 0.25rem;
+    border: 1px solid var(--ui-badge-border);
+    border-radius: 2px;
+    background-color: var(--ui-badge-neutral-bg);
+    color: var(--ui-badge-text);
     font-family: var(--ui-font-sans);
-    font-weight: 800;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     text-transform: none;
-    line-height: 1;
+    line-height: 1.1;
   }
 
   .theme-badge {
@@ -1028,34 +1050,39 @@ html[data-telegram-mini-app="true"] body {
   }
 
   .theme-badge-neutral {
-    color: var(--ui-text-primary);
-    background-color: var(--ui-bg-soft);
+    color: var(--ui-badge-text);
+    background-color: var(--ui-badge-neutral-bg);
   }
 
   .theme-badge-accent {
-    color: var(--ui-text-on-accent);
-    background-color: var(--ui-accent);
+    color: var(--ui-badge-accent-text);
+    background-color: var(--ui-badge-accent-bg);
   }
 
   .theme-badge-success {
     color: var(--ui-text-primary);
-    background-color: var(--ui-success);
+    background-color: var(--ui-badge-success-bg);
   }
 
   .theme-badge-warning {
     color: var(--ui-text-primary);
-    background-color: var(--ui-warning);
+    background-color: var(--ui-badge-warning-bg);
   }
 
-  .theme-badge-danger,
+  .theme-badge-danger {
+    color: var(--ui-text-primary);
+    background-color: var(--ui-badge-danger-bg);
+  }
+
   .theme-badge-solid-danger {
     color: var(--ui-text-on-accent);
     background-color: var(--ui-danger);
+    border-color: var(--ui-danger);
   }
 
   .theme-badge-info {
     color: var(--ui-text-primary);
-    background-color: var(--ui-info);
+    background-color: var(--ui-badge-info-bg);
   }
 
   .theme-badge-inverse {
@@ -1162,7 +1189,7 @@ html[data-telegram-mini-app="true"] body {
 
 @layer utilities {
   [class*="rounded"] {
-    border-radius: 0 !important;
+    border-radius: 2px !important;
   }
 
   [class*="transition"] {
