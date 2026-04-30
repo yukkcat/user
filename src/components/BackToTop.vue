@@ -11,6 +11,7 @@
       v-if="visible"
       @click="scrollToTop"
       class="fixed right-4 bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] lg:right-6 lg:bottom-10 z-40 flex h-11 w-11 items-center justify-center rounded-full border theme-btn-neutral shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
+      :class="{ 'theme-back-to-top-payment': hasPaymentDock }"
       :aria-label="t('common.backToTop')"
     >
       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,11 +22,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
+const route = useRoute()
 const { t } = useI18n()
 const visible = ref(false)
+const hasPaymentDock = computed(() => route.path === '/checkout' || route.path === '/pay')
 
 const onScroll = () => {
   visible.value = window.scrollY > 400

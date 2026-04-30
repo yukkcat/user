@@ -1,5 +1,5 @@
 <template>
-  <div class="theme-surface-soft border rounded-2xl p-4">
+  <div class="payment-amount-card theme-surface-soft border rounded-2xl p-4">
     <div class="text-xs uppercase tracking-wider theme-text-muted">{{ t('payment.payableAmountLabel') }}</div>
     <div class="mt-1 text-2xl font-bold theme-text-primary">{{ payableAmountDisplay }}</div>
     <div class="mt-4 space-y-2 text-xs">

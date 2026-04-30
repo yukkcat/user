@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen theme-page pt-24 pb-16">
+  <div class="payment-page min-h-screen theme-page pt-24 pb-16">
     <div class="container mx-auto px-4">
       <div class="mb-6 flex items-center justify-between">
         <div>
@@ -11,7 +11,7 @@
             t('payment.backToOrders') }}</router-link>
       </div>
 
-      <div class="mb-8 rounded-2xl border border-gray-200 theme-panel-soft p-4 backdrop-blur">
+      <div class="payment-flow-strip mb-8 rounded-2xl border border-gray-200 theme-panel-soft p-4">
         <div class="grid grid-cols-3 gap-3">
           <div
             v-for="step in flowSteps"
@@ -57,23 +57,24 @@
         <p class="theme-text-muted">{{ t('payment.orderNotFound') }}</p>
       </div>
 
-      <div v-else-if="showResultView" class="space-y-6">
-        <div class="theme-panel rounded-2xl p-6">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div v-else-if="showResultView" class="payment-result-view space-y-6">
+        <div class="theme-panel payment-status-card rounded-2xl p-6">
+          <div class="payment-result-head flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 class="text-xl font-bold theme-text-primary">{{ paymentResultTitle }}</h2>
-              <p class="text-sm theme-text-muted mt-1">{{ paymentGuideTip }}</p>
-              <div class="mt-2 text-xs theme-text-muted">
+              <div class="payment-eyebrow">{{ t('payment.guideTitle') }}</div>
+              <h2 class="payment-result-title text-xl font-bold theme-text-primary">{{ paymentResultTitle }}</h2>
+              <p class="payment-result-subtitle text-sm theme-text-muted mt-1">{{ paymentGuideTip }}</p>
+              <div class="payment-meta-line mt-2 text-xs theme-text-muted">
                 {{ t('payment.methodLabel') }}：{{ resultChannelName }}
               </div>
             </div>
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="payment-result-actions flex flex-wrap items-center gap-2">
               <button @click="handleRefresh" :disabled="loading"
-                class="theme-btn-inline-md border theme-btn-secondary disabled:opacity-60">
-                {{ t('payment.refreshStatus') }}
+                class="payment-primary-action disabled:opacity-60">
+                {{ t('payment.checkPaidStatus') }}
               </button>
               <button @click="resetPayment"
-                class="theme-btn-inline-md border theme-btn-secondary">
+                class="payment-ghost-action">
                 {{ t('payment.changeMethod') }}
               </button>
             </div>
@@ -82,43 +83,66 @@
           <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-4">
               <div v-if="showQRCode"
-                class="theme-surface-soft border rounded-2xl p-6 flex flex-col items-center justify-center text-center">
-                <div class="text-sm theme-text-muted mb-4">{{ paymentGuideTitle }}</div>
-                <img :src="qrImageUrl" alt="QR Code" class="w-56 h-56 object-contain" />
-                <div v-if="qrUsingPayLinkFallback" class="mt-3 text-xs theme-text-muted">
-                  {{ t('payment.qrFallbackHint') }}
+                class="payment-guide-card payment-guide-card-qr theme-surface-soft border rounded-2xl p-6">
+                <div class="payment-guide-copy">
+                  <div class="payment-guide-title">{{ t('payment.guideTitle') }}</div>
+                  <ol class="payment-guide-list">
+                    <li><span>1</span>{{ t('payment.qrStepScan') }}</li>
+                    <li><span>2</span>{{ t('payment.qrStepPay') }}</li>
+                    <li><span>3</span>{{ t('payment.qrStepReturn') }}</li>
+                  </ol>
                 </div>
+                <div class="payment-qr-stage">
+                  <div class="payment-guide-eyebrow">{{ paymentGuideTitle }}</div>
+                  <img :src="qrImageUrl" alt="QR Code" class="payment-qr-image w-56 h-56 object-contain" />
+                  <div v-if="qrUsingPayLinkFallback" class="payment-inline-note mt-3 text-xs theme-text-muted">
+                    {{ t('payment.qrFallbackHint') }}
+                  </div>
+                </div>
+                <button @click="handleRefresh" :disabled="loading"
+                  class="payment-primary-action payment-guide-action disabled:opacity-60">
+                  {{ t('payment.checkPaidStatus') }}
+                </button>
               </div>
 
-              <div v-else class="theme-surface-soft border rounded-2xl p-6">
-                <div class="text-sm theme-text-muted mb-3">{{ t('payment.openPayLink') }}</div>
+              <div v-else class="payment-guide-card payment-link-card theme-surface-soft border rounded-2xl p-6">
+                <div class="payment-guide-copy">
+                  <div class="payment-guide-eyebrow">{{ paymentGuideTitle }}</div>
+                  <div class="payment-guide-title">{{ t('payment.guideTitle') }}</div>
+                  <ol class="payment-guide-list">
+                    <li><span>1</span>{{ t('payment.redirectStepOpen') }}</li>
+                    <li><span>2</span>{{ t('payment.redirectStepPay') }}</li>
+                    <li><span>3</span>{{ t('payment.redirectStepReturn') }}</li>
+                  </ol>
+                </div>
                 <button
                   type="button"
                   @click="handleOpenPayLink"
-                  class="theme-btn-inline-md border theme-btn-secondary font-semibold">
+                  :disabled="!payLink"
+                  class="payment-primary-action mt-5 disabled:opacity-60">
                   {{ t('payment.openPayLink') }}
                 </button>
-                <div v-if="openedPayWindow" class="mt-3 text-xs text-emerald-500">
+                <div v-if="openedPayWindow" class="payment-success-note mt-3 text-xs text-emerald-500">
                   {{ payLinkOpenedTip }}
                 </div>
-                <div v-if="showTelegramPayHint" class="mt-3 text-xs theme-text-muted">
+                <div v-if="showTelegramPayHint" class="payment-inline-note mt-3 text-xs theme-text-muted">
                   {{ t('payment.telegramExternalHint') }}
                 </div>
                 <div class="mt-3 flex flex-wrap items-center gap-2">
                   <button @click="handleCopyPayLink"
-                    class="px-3 py-1.5 rounded-lg border theme-btn-secondary text-xs">
+                    class="payment-secondary-action payment-secondary-action-sm">
                     {{ t('payment.copyPayLink') }}
                   </button>
                   <span v-if="copied" class="text-xs text-emerald-500">{{ t('payment.copied') }}</span>
                 </div>
-                <div class="mt-3 text-xs theme-text-muted break-all">
+                <div class="payment-link-box mt-3 text-xs theme-text-muted break-all">
                   {{ t('payment.payLinkLabel') }}：{{ paymentResult.pay_url }}
                 </div>
               </div>
             </div>
 
             <div class="space-y-4">
-              <div class="theme-surface-soft border rounded-2xl p-4">
+              <div class="payment-summary-card theme-surface-soft border rounded-2xl p-4">
                 <div class="text-xs theme-text-muted">{{ t('payment.orderNo') }}</div>
                 <div class="text-sm font-semibold theme-text-primary mt-1">{{ order.order_no }}</div>
                 <div class="mt-3 text-xs theme-text-muted">{{ t('payment.orderStatus') }}：{{ statusLabel(order.status) }}</div>
@@ -141,7 +165,7 @@
                 :format-money="formatMoney"
               />
               <div v-if="paymentResult.expires_at"
-                class="theme-surface-soft border rounded-2xl p-4 text-xs theme-text-muted">
+                class="payment-deadline-card theme-surface-soft border rounded-2xl p-4 text-xs theme-text-muted">
                 {{ t('payment.expiresAt') }}：{{ formatDate(paymentResult.expires_at) }}
               </div>
             </div>
@@ -182,9 +206,9 @@
         </div>
       </div>
 
-      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div v-else class="payment-create-view grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
-          <div class="theme-panel rounded-2xl p-6">
+          <div class="theme-panel payment-info-card rounded-2xl p-6">
             <h2 class="text-lg font-bold mb-4 theme-text-primary">{{ t('payment.orderInfo') }}</h2>
             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div>
@@ -284,15 +308,23 @@
             </div>
           </div>
 
-          <div class="theme-panel rounded-2xl p-6">
-            <h2 class="text-lg font-bold mb-4 theme-text-primary">{{ t('payment.channelTitle') }}</h2>
+          <div class="theme-panel payment-choice-panel rounded-2xl p-6">
+            <div class="payment-section-title-row mb-4">
+              <div>
+                <div class="payment-eyebrow">{{ t('payment.guideTitle') }}</div>
+                <h2 class="text-lg font-bold theme-text-primary">{{ t('payment.channelTitle') }}</h2>
+              </div>
+            </div>
+            <div class="payment-help-note mb-5">
+              {{ t('payment.selectMethodTip') }}
+            </div>
             <div v-if="!configReady" class="text-sm theme-text-muted">
               {{ t('common.loading') }}
             </div>
             <template v-else>
               <div
                 v-if="showBalanceOption"
-                class="mb-4 rounded-xl border p-4 theme-surface-soft"
+                class="payment-wallet-card mb-4 rounded-xl border p-4 theme-surface-soft"
               >
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -318,7 +350,7 @@
                 </div>
               </div>
               <div v-if="cachedPayment"
-                class="mb-4 rounded-xl border p-4 text-sm space-y-2 theme-alert-warning">
+                class="payment-alert-card mb-4 rounded-xl border p-4 text-sm space-y-2 theme-alert-warning">
                 <div class="font-semibold">{{ t('payment.cachedTitle') }}</div>
                 <div>
                   {{ t('payment.cachedHint', {
@@ -401,14 +433,17 @@
           </div>
         </div>
 
-        <div class="h-fit rounded-2xl border theme-panel p-6 lg:sticky lg:top-24">
+        <div class="payment-submit-panel h-fit rounded-2xl border theme-panel p-6 lg:sticky lg:top-24">
           <h2 class="text-lg font-bold mb-4 theme-text-primary">{{ t('payment.actionTitle') }}</h2>
+          <div class="payment-help-note mb-4">
+            {{ t('payment.submitHint') }}
+          </div>
           <div v-if="showCountdown" class="text-xs theme-text-muted mb-3">
             {{ t('payment.countdownLabel') }}：<span class="font-mono">{{ countdownText }}</span>
           </div>
           <div
             v-if="paymentAlert"
-            class="mb-4 rounded-lg border p-3 text-sm"
+            class="payment-alert-card mb-4 rounded-lg border p-3 text-sm"
             :class="pageAlertClass(paymentAlert.level)"
           >
             {{ paymentAlert.message }}
@@ -416,36 +451,50 @@
 
           <div
             v-if="selectedChannel"
-            class="mb-4 rounded-lg border p-3 text-xs theme-alert-success"
+            class="payment-alert-card mb-4 rounded-lg border p-3 text-xs theme-alert-success"
           >
             <div class="font-semibold">{{ t('payment.methodLabel') }}：{{ selectedChannelName }}</div>
           </div>
           <div
             v-else-if="!requiresOnlineChannel && !orderExpired && !orderCanceled"
-            class="mb-4 rounded-lg border p-3 text-xs theme-alert-success"
+            class="payment-alert-card mb-4 rounded-lg border p-3 text-xs theme-alert-success"
           >
             {{ t('payment.walletPayOnly') }}
           </div>
           <div
             v-else-if="walletOnlyPayment && expectedOnlinePayCents > 0 && !orderExpired && !orderCanceled"
-            class="mb-4 rounded-lg border p-3 text-xs theme-alert-warning"
+            class="payment-alert-card mb-4 rounded-lg border p-3 text-xs theme-alert-warning"
           >
             {{ t('payment.walletInsufficientHint') }}
           </div>
           <div
             v-else-if="!walletOnlyPayment && requiresOnlineChannel && !orderExpired && !orderCanceled"
-            class="mb-4 rounded-lg border p-3 text-xs theme-alert-warning"
+            class="payment-alert-card mb-4 rounded-lg border p-3 text-xs theme-alert-warning"
           >
             {{ t('payment.selectChannelError') }}
           </div>
 
           <button @click="handlePayment" :disabled="!canSubmitPayment"
-            class="theme-btn-block-md theme-btn-primary font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50">
+            class="payment-primary-action w-full font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50">
             {{ submitting ? t('payment.submitting') : t('payment.submitButton') }}
           </button>
           <button @click="handleRefresh" :disabled="loading"
-            class="theme-btn-block-md mt-3 border theme-btn-secondary font-semibold disabled:opacity-60">
-            {{ t('payment.refreshStatus') }}
+            class="payment-secondary-action w-full mt-3 font-semibold disabled:opacity-60">
+            {{ t('payment.checkPaidStatus') }}
+          </button>
+        </div>
+
+        <div class="payment-mobile-paybar">
+          <div v-if="paymentMobileHint" class="payment-mobile-paybar-hint">
+            {{ paymentMobileHint }}
+          </div>
+          <div class="payment-mobile-paybar-total">
+            <span>{{ t('payment.payableAmountLabel') }}</span>
+            <strong>{{ payableAmountDisplay }}</strong>
+          </div>
+          <button @click="handlePayment" :disabled="!canSubmitPayment"
+            class="payment-primary-action disabled:cursor-not-allowed disabled:opacity-50">
+            {{ submitting ? t('payment.submitting') : t('payment.submitButton') }}
           </button>
         </div>
       </div>
@@ -736,6 +785,15 @@ const paymentAlert = computed<PageAlert | null>(() => {
     }
   }
   return null
+})
+const paymentMobileHint = computed(() => {
+  if (paymentAlert.value?.message) return paymentAlert.value.message
+  if (selectedChannelAmountHint.value) return selectedChannelAmountHint.value
+  if (selectedChannel.value) return t('payment.selectedMethodHint', { method: selectedChannelName.value })
+  if (!requiresOnlineChannel.value && !orderExpired.value && !orderCanceled.value) return t('payment.walletPayOnly')
+  if (walletOnlyPayment.value && expectedOnlinePayCents.value > 0 && !orderExpired.value && !orderCanceled.value) return t('payment.walletInsufficientHint')
+  if (!walletOnlyPayment.value && requiresOnlineChannel.value && !orderExpired.value && !orderCanceled.value) return t('payment.selectChannelError')
+  return ''
 })
 const remainingMs = computed(() => {
   if (!expiresAtMs.value) return null

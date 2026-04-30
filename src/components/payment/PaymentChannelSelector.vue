@@ -1,19 +1,32 @@
 <template>
-  <div v-if="props.channels.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div v-if="props.channels.length > 0" class="payment-channel-grid grid grid-cols-1 md:grid-cols-2 gap-4">
     <button v-for="channel in props.channels" :key="channel.id"
       :disabled="isDisabled(channel)"
+      :aria-pressed="props.modelValue === channel.id && !isDisabled(channel)"
       :title="isDisabled(channel) ? channelHint(channel) : ''"
       @click="handleSelect(channel)"
-      class="text-left border rounded-xl p-4 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+      class="payment-channel-card text-left border rounded-xl p-4 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
       :class="props.modelValue === channel.id && !isDisabled(channel) ? 'theme-selected-surface' : 'theme-interactive-surface'">
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <img v-if="channel.icon" :src="getImageUrl(channel.icon)" loading="lazy" class="h-5 w-5 rounded object-contain shrink-0" />
           <div class="theme-text-primary font-medium">{{ channel.name }}</div>
         </div>
-        <span v-if="props.modelValue === channel.id && !isDisabled(channel)"
-          class="theme-badge theme-badge-accent theme-badge-xs px-2 py-0.5">
-          {{ t('payment.selected') }}
+        <span
+          class="payment-channel-action-mark"
+          :class="props.modelValue === channel.id && !isDisabled(channel)
+            ? 'payment-channel-action-mark-selected'
+            : isDisabled(channel)
+              ? 'payment-channel-action-mark-disabled'
+              : ''"
+        >
+          {{
+            props.modelValue === channel.id && !isDisabled(channel)
+              ? t('payment.selected')
+              : isDisabled(channel)
+                ? t('payment.unavailable')
+                : t('payment.tapToSelect')
+          }}
         </span>
       </div>
       <div class="mt-2 space-y-1 text-xs theme-text-muted">

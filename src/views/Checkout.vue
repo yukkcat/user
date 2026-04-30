@@ -1,15 +1,15 @@
 <template>
-  <div class="min-h-screen theme-page pt-24 pb-16">
+  <div class="checkout-page min-h-screen theme-page pt-24 pb-16">
     <div class="container mx-auto px-4">
       <div class="mb-8">
         <h1 class="mb-2 text-3xl font-black theme-text-primary">{{ t('checkout.title') }}</h1>
         <p class="text-sm theme-text-secondary">{{ t('checkout.subtitle') }}</p>
       </div>
 
-      <div class="mb-8 rounded-2xl border theme-border theme-panel-soft p-4 backdrop-blur">
-        <div class="flex items-center">
+      <div class="payment-flow-strip mb-8 rounded-2xl border theme-border theme-panel-soft p-4">
+        <div class="checkout-flow-track flex items-center">
           <template v-for="(step, idx) in flowSteps" :key="step.key">
-            <div class="flex items-center gap-2" :class="idx === 0 ? '' : 'flex-1'">
+            <div class="checkout-flow-step flex items-center gap-2" :class="idx === 0 ? '' : 'flex-1'">
               <div v-if="idx > 0" class="flex-1 h-0.5 rounded-full transition-colors"
                 :class="step.active ? 'bg-current theme-text-accent' : 'theme-surface-muted'"></div>
               <div class="flex items-center gap-2 shrink-0">
@@ -19,7 +19,7 @@
                     : 'border-gray-300 dark:border-gray-600 theme-text-muted'">
                   {{ idx + 1 }}
                 </span>
-                <span class="text-sm font-medium hidden sm:inline"
+                <span class="checkout-flow-label text-sm font-medium"
                   :class="step.active ? 'theme-text-primary' : 'theme-text-muted'">
                   {{ step.label }}
                 </span>
@@ -42,7 +42,7 @@
         </router-link>
       </div>
 
-      <div v-else class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div v-else class="checkout-layout grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
           <div class="rounded-2xl border theme-panel p-6">
             <h2 class="mb-4 text-lg font-bold theme-text-primary">{{ t('checkout.itemsTitle') }}</h2>
@@ -211,9 +211,9 @@
           </div>
         </div>
 
-        <div class="h-fit rounded-2xl border theme-panel p-6 lg:sticky lg:top-24">
+        <div class="checkout-submit-panel h-fit rounded-2xl border theme-panel p-6 lg:sticky lg:top-24">
           <h2 class="mb-4 text-lg font-bold theme-text-primary">{{ t('checkout.submitTitle') }}</h2>
-          <div class="mb-4 rounded-lg border theme-surface-soft p-3 text-xs theme-text-muted">
+          <div class="payment-help-note mb-4 rounded-lg border theme-surface-soft p-3 text-xs theme-text-muted">
             {{ t('checkout.submitHint') }}
           </div>
 
@@ -249,7 +249,7 @@
           </div>
           <div
             v-if="checkoutAlert"
-            class="mb-4 rounded-lg border p-3 text-sm"
+            class="payment-alert-card mb-4 rounded-lg border p-3 text-sm"
             :class="pageAlertClass(checkoutAlert.level)"
           >
             {{ checkoutAlert.message }}
@@ -287,17 +287,36 @@
 
             <!-- Channel Grid (hidden in wallet-only mode) -->
             <template v-if="!walletOnlyPayment">
-              <div v-if="requiresOnlineChannel && paymentChannels.length > 0" class="grid grid-cols-2 gap-2">
+              <div v-if="requiresOnlineChannel && paymentChannels.length > 0" class="payment-channel-grid grid grid-cols-2 gap-2">
                 <button v-for="channel in paymentChannels" :key="channel.id"
                   type="button"
                   :disabled="isChannelDisabledForAmount(channel)"
+                  :aria-pressed="selectedChannelId === channel.id && !isChannelDisabledForAmount(channel)"
                   :title="isChannelDisabledForAmount(channel) ? channelAmountLimitHint(channel) : ''"
                   @click="handleSelectChannel(channel)"
-                  class="text-left border rounded-lg p-2.5 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                  class="payment-channel-card text-left border rounded-lg p-2.5 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                   :class="selectedChannelId === channel.id && !isChannelDisabledForAmount(channel) ? 'theme-selected-surface' : 'theme-interactive-surface'">
-                  <div class="flex items-center gap-2">
-                    <img v-if="channel.icon" :src="getImageUrl(channel.icon)" loading="lazy" class="h-5 w-5 rounded object-contain shrink-0" />
-                    <div class="text-sm theme-text-primary font-medium truncate">{{ channel.name }}</div>
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex min-w-0 items-center gap-2">
+                      <img v-if="channel.icon" :src="getImageUrl(channel.icon)" loading="lazy" class="h-5 w-5 rounded object-contain shrink-0" />
+                      <div class="text-sm theme-text-primary font-medium truncate">{{ channel.name }}</div>
+                    </div>
+                    <span
+                      class="payment-channel-action-mark"
+                      :class="selectedChannelId === channel.id && !isChannelDisabledForAmount(channel)
+                        ? 'payment-channel-action-mark-selected'
+                        : isChannelDisabledForAmount(channel)
+                          ? 'payment-channel-action-mark-disabled'
+                          : ''"
+                    >
+                      {{
+                        selectedChannelId === channel.id && !isChannelDisabledForAmount(channel)
+                          ? t('payment.selected')
+                          : isChannelDisabledForAmount(channel)
+                            ? t('payment.unavailable')
+                            : t('payment.tapToSelect')
+                      }}
+                    </span>
                   </div>
                   <div class="mt-1 space-y-0.5 text-xs theme-text-muted">
                     <div>{{ t('payment.feeLabel') }}：{{ formatChannelFeeRate(channel) }}</div>
@@ -320,7 +339,24 @@
           <button
             @click="handleSubmit"
             :disabled="!canSubmit"
-            class="theme-btn-block-md theme-btn-primary font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            class="payment-primary-action w-full font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ submitting ? t('checkout.submitting') : t('checkout.submitButton') }}
+          </button>
+        </div>
+
+        <div class="checkout-mobile-paybar">
+          <div v-if="checkoutMobileHint" class="payment-mobile-paybar-hint">
+            {{ checkoutMobileHint }}
+          </div>
+          <div class="payment-mobile-paybar-total">
+            <span>{{ t('checkout.previewTotal') }}</span>
+            <strong>{{ formatPrice(previewTotal, previewCurrency) }}</strong>
+          </div>
+          <button
+            @click="handleSubmit"
+            :disabled="!canSubmit"
+            class="payment-primary-action disabled:cursor-not-allowed disabled:opacity-50"
           >
             {{ submitting ? t('checkout.submitting') : t('checkout.submitButton') }}
           </button>
@@ -950,6 +986,10 @@ const checkoutAlert = computed<PageAlert | null>(() => {
     return { level: 'warning' as const, message: submitBlockedReason.value }
   }
   return null
+})
+const checkoutMobileHint = computed(() => {
+  if (checkoutAlert.value?.message) return checkoutAlert.value.message
+  return t('checkout.readyToSubmit')
 })
 
 const buildItemsPayload = () => cartItems.value.map(item => ({
