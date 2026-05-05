@@ -38,11 +38,11 @@
           role="dialog"
           aria-modal="true"
           class="
-            w-full max-h-[85vh] flex flex-col
+            quick-buy-panel
+            w-full max-h-[88svh] flex flex-col overflow-hidden
             rounded-t-2xl md:rounded-2xl
             theme-panel-strong border-t md:border theme-border
-            shadow-2xl
-            md:max-w-md md:max-h-[75vh]
+            md:max-w-md md:max-h-[78vh]
           "
           @click.stop
         >
@@ -194,7 +194,7 @@
                   class="rounded-lg border px-3 py-1.5 text-[13px] transition-all"
                   :class="[
                     normalizeSkuId(sku.id) === selectedSkuId
-                      ? 'theme-selected-surface ring-1 ring-primary/30 font-semibold'
+                      ? 'theme-selected-surface font-semibold'
                       : 'theme-btn-secondary font-medium',
                     isSkuPurchasable(sku) ? 'cursor-pointer' : 'cursor-not-allowed opacity-45 border-dashed',
                   ]"
@@ -267,27 +267,27 @@
           </div>
 
           <!-- Actions (sticky bottom) -->
-          <div class="shrink-0 px-4 md:px-5 pt-3 pb-3 md:pb-5 border-t theme-border theme-safe-bottom">
+          <div class="quick-buy-footer shrink-0 border-t theme-border">
             <button
               v-if="requiresLogin"
               @click="goLogin"
-              class="w-full py-3 theme-btn-primary font-semibold rounded-xl min-h-[44px] text-sm cursor-pointer"
+              class="quick-buy-action quick-buy-action-primary theme-btn-primary cursor-pointer"
             >
               {{ t('quickBuy.loginToBuy') }}
             </button>
-            <div v-else-if="isSoldOut(product)" class="flex gap-3">
+            <div v-else-if="isSoldOut(product)" class="quick-buy-actions quick-buy-actions-single">
               <button
                 @click="goToDetail"
-                class="flex-1 py-3 border theme-btn-secondary font-semibold rounded-xl min-h-[44px] text-sm cursor-pointer"
+                class="quick-buy-action quick-buy-action-secondary border theme-btn-secondary cursor-pointer"
               >
                 {{ t('quickBuy.viewDetail') }}
               </button>
             </div>
-            <div v-else class="flex gap-3">
+            <div v-else class="quick-buy-actions">
               <button
                 @click="handleAddToCart"
                 :disabled="!canPurchase"
-                class="flex-1 py-3 border theme-btn-secondary font-semibold rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 min-h-[44px] text-sm flex items-center justify-center gap-1.5"
+                class="quick-buy-action quick-buy-action-secondary border theme-btn-secondary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
@@ -297,7 +297,7 @@
               <button
                 @click="handleBuyNow"
                 :disabled="!canPurchase"
-                class="flex-1 py-3 theme-btn-primary font-semibold rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 min-h-[44px] text-sm"
+                class="quick-buy-action quick-buy-action-primary theme-btn-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {{ t('quickBuy.buyNow') }}
               </button>
@@ -679,6 +679,70 @@ const getProductImages = () => {
 </script>
 
 <style scoped>
+.quick-buy-panel {
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+  box-shadow: none !important;
+}
+
+.quick-buy-footer {
+  background: var(--surface-bg);
+  padding: 12px 16px max(12px, calc(12px + env(safe-area-inset-bottom, 0px)));
+}
+
+.quick-buy-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 10px;
+}
+
+.quick-buy-actions-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.quick-buy-action {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: var(--radius-md) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: none !important;
+  white-space: nowrap;
+}
+
+.quick-buy-action-primary {
+  border: 1px solid transparent !important;
+}
+
+.quick-buy-action-secondary {
+  border-color: var(--surface-border-strong) !important;
+}
+
+.quick-buy-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+@media (min-width: 768px) {
+  .quick-buy-panel {
+    border-radius: var(--radius-xl) !important;
+  }
+
+  .quick-buy-footer {
+    padding: 14px 20px 18px;
+  }
+
+  .quick-buy-actions {
+    gap: 12px;
+  }
+}
+
 /* Mobile: slide up from bottom */
 .quick-buy-enter-active {
   transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1), opacity 280ms ease-out;

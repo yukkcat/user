@@ -209,18 +209,20 @@
                 </div>
 
                 <div v-if="activeSkus.length" class="mb-8">
-                  <h2 class="mb-3 text-sm font-semibold theme-text-muted">
-                    {{ t('productDetail.skuTitle') }}
+                  <h2 class="order-section-title mb-2">
+                    <span class="order-section-index">1</span>
+                    <span>{{ t('productDetail.skuTitle') }}</span>
                   </h2>
-                  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <p class="order-section-hint mb-3">{{ t('productDetail.skuHint') }}</p>
+                  <div class="sku-choice-grid">
                     <button
                       v-for="sku in activeSkus"
                       :key="sku.id"
                       type="button"
-                      class="flex flex-col items-start rounded-xl border px-3 py-2 text-sm transition-all min-h-[44px]"
+                      class="sku-choice-card flex flex-col items-start px-3 py-2 text-sm transition-all"
                       :class="[
-                        normalizeSkuId(sku.id) === selectedSkuId ? 'theme-selected-surface ring-1 ring-primary/30' : 'theme-btn-secondary',
-                        isSkuPurchasable(sku) ? 'hover:-translate-y-0.5' : 'cursor-not-allowed opacity-55 border-dashed',
+                        normalizeSkuId(sku.id) === selectedSkuId ? 'is-selected theme-selected-surface' : 'theme-btn-secondary',
+                        isSkuPurchasable(sku) ? '' : 'cursor-not-allowed opacity-55 border-dashed',
                       ]"
                       :disabled="!isSkuPurchasable(sku)"
                       @click="selectedSkuId = normalizeSkuId(sku.id)"
@@ -251,10 +253,12 @@
 
               <!-- Quantity Selector -->
                 <div class="mb-8">
-                  <h2 class="mb-3 text-sm font-semibold theme-text-muted">
-                    {{ t('productDetail.quantity') }}
+                  <h2 class="order-section-title mb-2">
+                    <span class="order-section-index">2</span>
+                    <span>{{ t('productDetail.quantity') }}</span>
                   </h2>
-                  <div class="flex items-center rounded-lg border theme-border overflow-hidden w-fit">
+                  <p class="order-section-hint mb-3">{{ t('productDetail.quantityHint') }}</p>
+                  <div class="quantity-stepper flex items-center rounded-lg border theme-border overflow-hidden w-fit">
                     <button
                       type="button"
                       class="w-10 h-10 flex items-center justify-center theme-text-secondary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors disabled:opacity-30"
@@ -287,7 +291,14 @@
                 </div>
 
               <!-- Purchase Actions (Desktop + original position) -->
-              <div ref="purchaseActionsRef" class="mt-auto space-y-6">
+              <div ref="purchaseActionsRef" class="product-purchase-actions mt-auto space-y-6">
+                <div>
+                  <h2 class="order-section-title mb-2">
+                    <span class="order-section-index">3</span>
+                    <span>{{ t('checkout.submitTitle') }}</span>
+                  </h2>
+                  <p class="order-section-hint">{{ t('productDetail.purchaseActionHint') }}</p>
+                </div>
                 <p v-if="cannotPurchaseReason" class="rounded-xl border theme-alert-danger px-4 py-3 text-sm font-semibold">
                   {{ cannotPurchaseReason }}
                 </p>
@@ -355,6 +366,7 @@
           :show-product-promotion-price="mobileBarShowProductPromotionPrice"
           :product-promotion-price-display="mobileBarProductPromotionPriceDisplay"
           :product-price-display="mobileBarProductPriceDisplay"
+          :hint="cannotPurchaseReason || purchaseWarning"
           @add-to-cart="addToCart"
           @buy-now="buyNow"
           @go-login="goLogin"
@@ -446,7 +458,7 @@ const selectedSkuId = ref(0)
 const quantity = ref(1)
 const purchaseWarning = ref('')
 const purchaseActionsRef = ref<HTMLElement | null>(null)
-const showMobileBar = ref(false)
+const showMobileBar = ref(true)
 let observer: IntersectionObserver | null = null
 
 const activeSkus = computed(() => {

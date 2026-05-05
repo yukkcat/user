@@ -11,6 +11,22 @@ const normalizeText = (value: unknown) => String(value ?? '').trim()
 
 const normalizeLocaleCode = (locale?: unknown) => normalizeText(locale).toLowerCase()
 
+const INTERNAL_SPEC_KEY_RE = /(^|[_\-\s])(sku|code|slug|id|internal|secret|token)([_\-\s]|$)|sku_?code|product_?code/i
+const RAW_INTERNAL_VALUE_RE = /^[A-Z0-9][A-Z0-9_-]{3,}$/
+
+const looksLikeInternalValue = (value: string) => {
+  if (!value) return false
+  if (/\s/.test(value)) return false
+  if (/[\u4e00-\u9fff]/.test(value)) return false
+  return RAW_INTERNAL_VALUE_RE.test(value)
+}
+
+const isDisplayableSpecText = (value: string) => {
+  const text = normalizeText(value)
+  if (!text) return false
+  return !looksLikeInternalValue(text)
+}
+
 const localeFallbacks = (locale?: string) => {
   const normalized = normalizeLocaleCode(locale)
   switch (normalized) {
@@ -56,7 +72,8 @@ const normalizeSpecValue = (value: unknown, locale?: string): string => {
   }
   if (value === null || value === undefined) return ''
   if (isLocalizedObject(value)) {
-    return resolveLocalizedText(value, locale)
+    const localized = resolveLocalizedText(value, locale)
+    return isDisplayableSpecText(localized) ? localized : ''
   }
   if (typeof value === 'object') {
     try {
@@ -65,19 +82,22 @@ const normalizeSpecValue = (value: unknown, locale?: string): string => {
       return ''
     }
   }
-  return normalizeText(value)
+  const text = normalizeText(value)
+  return isDisplayableSpecText(text) ? text : ''
 }
 
 export const formatSkuSpecValues = (specValues: unknown, locale?: string) => {
   if (!specValues || typeof specValues !== 'object' || Array.isArray(specValues)) return ''
   if (isLocalizedObject(specValues)) {
-    return resolveLocalizedText(specValues, locale)
+    const localized = resolveLocalizedText(specValues, locale)
+    return isDisplayableSpecText(localized) ? localized : ''
   }
   const entries = Object.entries(specValues as Record<string, unknown>)
     .map(([key, value]) => {
+      const normalizedKey = normalizeText(key)
+      if (INTERNAL_SPEC_KEY_RE.test(normalizedKey)) return ''
       const normalizedValue = normalizeSpecValue(value, locale)
       if (!normalizedValue) return ''
-      const normalizedKey = normalizeText(key)
       if (!normalizedKey) return normalizedValue
       return `${normalizedKey}:${normalizedValue}`
     })

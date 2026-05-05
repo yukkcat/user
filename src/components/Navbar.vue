@@ -133,7 +133,7 @@
       leave-active-class="transition duration-200 ease-in"
       leave-from-class="opacity-100"
       leave-to-class="opacity-0">
-      <div v-if="showMobileMenu" class="lg:hidden fixed inset-0 z-[60] bg-black/50" @click="showMobileMenu = false" style="overscroll-behavior: none;"></div>
+      <div v-if="showMobileMenu" class="commerce-overlay lg:hidden fixed inset-0 z-[60] bg-black/50" @click="showMobileMenu = false" style="overscroll-behavior: none;"></div>
     </Transition>
 
     <!-- Mobile Drawer (only items NOT in bottom nav) -->
@@ -145,13 +145,13 @@
       leave-from-class="translate-x-0"
       leave-to-class="translate-x-full">
       <div v-if="showMobileMenu"
-        class="lg:hidden fixed right-0 top-0 bottom-0 z-[70] w-72 max-w-[80vw] theme-panel-strong backdrop-blur-xl border-l theme-border overflow-y-auto"
+        class="commerce-dialog lg:hidden fixed right-0 top-0 bottom-0 z-[70] w-72 max-w-[80vw] theme-panel-strong border-l theme-border overflow-y-auto"
         style="overscroll-behavior: none;">
         <div class="p-5 space-y-1">
           <!-- Header -->
           <div class="flex items-center justify-between mb-4">
             <span class="theme-nav-menu-label px-0">{{ t('navbar.more') }}</span>
-            <button @click="showMobileMenu = false" class="theme-nav-link p-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <button @click="showMobileMenu = false" class="commerce-close theme-nav-link p-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>

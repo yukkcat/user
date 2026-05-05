@@ -14,14 +14,30 @@
       <div v-if="showAuthForm"
         class="theme-panel rounded-2xl p-6 mb-6">
         <h2 class="text-lg font-bold mb-2">{{ t('guestOrderDetail.authTitle') }}</h2>
-        <p class="text-xs theme-text-muted mb-4">{{ t('guestOrderDetail.authHint') }}</p>
+        <div class="order-credential-note mb-4">
+          <p class="font-semibold theme-text-primary">{{ t('guestOrderDetail.authHint') }}</p>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input v-model="auth.email" type="email"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.emailPlaceholder')" />
-          <input v-model="auth.order_password" type="password"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.passwordPlaceholder')" />
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.emailPlaceholder') }}<span class="form-required-mark">*</span></span>
+            </span>
+            <input v-model="auth.email" type="email"
+              required
+              autocomplete="email"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.emailPlaceholder')" />
+          </label>
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.passwordPlaceholder') }}<span class="form-required-mark">*</span></span>
+            </span>
+            <input v-model="auth.order_password" type="password"
+              required
+              autocomplete="current-password"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.passwordPlaceholder')" />
+          </label>
         </div>
         <div v-if="authError" class="text-red-400 text-sm mt-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
           {{ authError }}
@@ -308,7 +324,7 @@
                     t('orderDetail.childFulfillmentTitle') }}</h3>
                   <button v-if="child.fulfillment?.status === 'delivered'"
                     class="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-sm"
-                    :class="fulfillmentCopied ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'"
+                    :class="fulfillmentCopied ? 'bg-emerald-600 text-white' : 'bg-neutral-900 text-white hover:bg-neutral-950 active:bg-black dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white'"
                     @click="handleCopyFulfillment(child.fulfillment)">
                     <svg v-if="!fulfillmentCopied" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
@@ -323,7 +339,7 @@
                   <div v-if="isFulfillmentTruncated(child.fulfillment)" class="mt-3">
                     <div class="flex items-center justify-between mb-2">
                       <span class="text-sm theme-text-muted">{{ t('orderDetail.fulfillmentTotalLines', { count: child.fulfillment.payload_line_count }) }}</span>
-                      <button class="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-sm disabled:opacity-50"
+                      <button class="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg bg-neutral-900 text-white hover:bg-neutral-950 active:bg-black dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white transition-colors shadow-sm disabled:opacity-50"
                         :disabled="fulfillmentDownloading"
                         @click="handleDownloadFulfillment(child.order_no || order.order_no)">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
@@ -356,7 +372,7 @@
             <h2 class="text-lg font-bold">{{ t('orderDetail.fulfillmentTitle') }}</h2>
             <div class="flex items-center gap-2">
               <button v-if="isFulfillmentTruncated(order.fulfillment)"
-                class="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-sm disabled:opacity-50"
+                class="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg bg-neutral-900 text-white hover:bg-neutral-950 active:bg-black dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white transition-colors shadow-sm disabled:opacity-50"
                 :disabled="fulfillmentDownloading"
                 @click="handleDownloadFulfillment(order.order_no)">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
@@ -364,7 +380,7 @@
               </button>
               <button v-if="order.fulfillment.status === 'delivered' && !isFulfillmentTruncated(order.fulfillment)"
                 class="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm"
-                :class="fulfillmentCopied ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'"
+                :class="fulfillmentCopied ? 'bg-emerald-600 text-white' : 'bg-neutral-900 text-white hover:bg-neutral-950 active:bg-black dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white'"
                 @click="handleCopyFulfillment(order.fulfillment)">
                 <svg v-if="!fulfillmentCopied" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>

@@ -1,4 +1,5 @@
 import i18n from '../i18n'
+import { resolveMockResponse } from '../mocks/handler'
 
 export const t = (key: string, params?: Record<string, any>) =>
     (params ? i18n.global.t(key, params) : i18n.global.t(key)) as string
@@ -90,6 +91,11 @@ function createClient(injectAuth: boolean) {
 
         if (body !== undefined && !(body instanceof FormData)) {
             headers['Content-Type'] = 'application/json'
+        }
+
+        const mockResponse = resolveMockResponse(method, path, opts.params, body)
+        if (mockResponse) {
+            return { data: mockResponse }
         }
 
         const controller = new AbortController()

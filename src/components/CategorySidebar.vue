@@ -36,7 +36,6 @@
       <div class="p-6">
         <div class="flex items-center justify-between mb-6">
           <span class="text-sm font-bold theme-text-primary flex items-center gap-2">
-            <span class="w-1 h-5 theme-accent-stick rounded-full"></span>
             {{ showSearch ? t('products.filter') : t('products.categories') }}
           </span>
           <button @click="$emit('update:showDrawer', false)"
@@ -125,7 +124,9 @@
   </Transition>
 
   <!-- Desktop Sidebar -->
-  <aside class="hidden lg:block flex-shrink-0" :class="compact ? 'lg:w-60' : 'lg:w-64'">
+  <aside
+    class="hidden lg:block flex-none category-sidebar-shell"
+    :class="compact ? 'lg:w-60 category-sidebar-shell-compact' : 'lg:w-64'">
     <div class="theme-panel backdrop-blur-xl border rounded-2xl sticky top-24" :class="compact ? 'p-5' : 'p-6'">
       <!-- Search (desktop, only for Products page) -->
       <div v-if="showSearch" :class="compact ? 'mb-4' : 'mb-6'">
@@ -145,7 +146,6 @@
 
       <h2 :class="compact ? 'text-base font-bold mb-4' : 'text-lg font-bold mb-6'"
         class="theme-text-primary flex items-center gap-2">
-        <span class="w-1 h-5 theme-accent-stick rounded-full"></span>
         {{ t('products.categories') }}
       </h2>
 

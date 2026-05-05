@@ -407,14 +407,14 @@
 
           <div
             v-if="products.length > 0"
-            class="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5"
+            class="product-list-page"
           >
-            <ProductCard
+            <ProductListItem
               v-for="(product, idx) in products"
               :key="product.id"
               :product="product"
               :index="idx"
-              :animation-step="60"
+              :animation-step="20"
               @click="goToProduct"
               @quick-buy="openQuickBuy"
             />
@@ -509,7 +509,6 @@ import { useBannerCarousel } from '../composables/useBannerCarousel'
 import { useProductList } from '../composables/useProductList'
 import { useProductListGroups } from '../composables/useProductListGroups'
 import { useAppStore } from '../stores/app'
-import ProductCard from '../components/ProductCard.vue'
 import ProductListItem from '../components/ProductListItem.vue'
 import ProductQuickBuy from '../components/ProductQuickBuy.vue'
 import CategorySidebar from '../components/CategorySidebar.vue'

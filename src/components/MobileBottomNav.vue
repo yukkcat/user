@@ -1,5 +1,5 @@
 <template>
-  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 theme-panel-strong backdrop-blur-xl border-t theme-border theme-safe-bottom">
+  <nav class="mobile-bottom-nav commerce-bottom-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 theme-panel-strong border-t theme-border theme-safe-bottom">
     <div class="flex items-stretch h-14">
       <router-link
         v-for="item in navItems"

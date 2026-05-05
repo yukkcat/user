@@ -20,25 +20,46 @@
             {{ t('guestOrders.clearSaved') }}
           </button>
         </div>
+        <div class="order-credential-note mb-4">
+          <p class="font-semibold theme-text-primary">{{ t('guestOrders.tip') }}</p>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input v-model="email" type="email"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.emailPlaceholder')" />
-          <input v-model="orderPassword" type="password"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.passwordPlaceholder')" />
-          <input v-model="orderNo" type="text"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.orderNoPlaceholder')" />
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.emailPlaceholder') }}<span class="form-required-mark">*</span></span>
+            </span>
+            <input v-model="email" type="email"
+              required
+              autocomplete="email"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.emailPlaceholder')" />
+          </label>
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.passwordPlaceholder') }}<span class="form-required-mark">*</span></span>
+            </span>
+            <input v-model="orderPassword" type="password"
+              required
+              autocomplete="current-password"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.passwordPlaceholder')" />
+          </label>
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.orderNoPlaceholder') }}</span>
+            </span>
+            <input v-model="orderNo" type="text"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.orderNoPlaceholder')" />
+          </label>
           <button @click="handleSearch" :disabled="loading"
-            class="theme-btn-primary rounded-xl font-bold px-6 py-3 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2">
+            class="theme-btn-primary rounded-xl font-bold px-6 py-3 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2 md:self-end">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             {{ loading ? t('guestOrders.searching') : t('guestOrders.search') }}
           </button>
         </div>
-        <p class="text-xs theme-text-muted mt-3">{{ t('guestOrders.tip') }}</p>
         <div v-if="error" class="text-red-400 text-sm mt-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
           {{ error }}
         </div>

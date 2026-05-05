@@ -32,9 +32,9 @@
       </div>
 
       <div v-if="isSoldOut(product)" class="absolute inset-0 bg-black/45 flex items-center justify-center">
-        <span class="theme-badge theme-badge-solid-danger theme-badge-xs">
+        <UiBadge variant="danger" size="xs">
           {{ t('products.stockStatus.outOfStock') }}
-        </span>
+        </UiBadge>
       </div>
     </div>
 
@@ -50,20 +50,20 @@
       </h3>
 
       <div class="flex flex-wrap items-center gap-1.5">
-        <span
-          class="theme-badge-xs"
+        <UiBadge
+          size="xs"
           :class="product.fulfillment_type === 'auto' ? 'theme-badge-info' : 'theme-badge-neutral'">
           {{ getFulfillmentTypeLabel(product.fulfillment_type) }}
-        </span>
-        <span
+        </UiBadge>
+        <UiBadge
           v-if="shouldShowStockBadge(product)"
-          class="theme-badge-xs"
+          size="xs"
           :class="getStockBadgeClass(product.stock_status)">
           {{ getStockStatusLabel(product) }}
-        </span>
-        <span v-else-if="product.purchase_type === 'member'" class="theme-badge-xs theme-badge-success">
+        </UiBadge>
+        <UiBadge v-else-if="product.purchase_type === 'member'" size="xs" class="theme-badge-success">
           {{ getPurchaseTypeLabel(product.purchase_type) }}
-        </span>
+        </UiBadge>
       </div>
     </div>
 
@@ -77,29 +77,31 @@
             <span class="hidden sm:inline text-[10px] theme-price-original line-through">
               {{ formatPrice(product.price_amount, siteCurrency) }}
             </span>
-            <span class="theme-badge theme-badge-danger theme-badge-xs">
+            <UiBadge variant="danger" size="xs">
               {{ t('products.promotionTag') }}
-            </span>
+            </UiBadge>
           </div>
         </div>
         <div v-else class="flex flex-col items-end">
           <span class="text-xs sm:text-sm font-bold theme-text-primary whitespace-nowrap">
             {{ formatPrice(product.price_amount, siteCurrency) }}
           </span>
-          <span v-if="hasPromotionRules(product)" class="theme-badge theme-badge-warning theme-badge-xs mt-1">
+          <UiBadge v-if="hasPromotionRules(product)" variant="warning" size="xs" class="mt-1">
             {{ t('products.promotionBadge') }}
-          </span>
+          </UiBadge>
         </div>
       </div>
 
-      <button
+      <UiButton
         type="button"
-        class="theme-btn-secondary h-8 px-2 sm:px-2.5 text-[10px] sm:text-[11px] leading-none flex-shrink-0"
+        variant="secondary"
+        size="sm"
+        class="h-8 px-2 sm:px-2.5 text-[10px] sm:text-[11px] leading-none flex-shrink-0"
         :class="isSoldOut(product) ? 'opacity-40 cursor-not-allowed' : ''"
         :disabled="isSoldOut(product)"
         @click.stop="$emit('quickBuy', product)">
         {{ t('products.quickBuy') }}
-      </button>
+      </UiButton>
 
       <svg
         class="hidden sm:block w-4 h-4 flex-shrink-0 theme-text-muted"
@@ -116,6 +118,8 @@
 import { useI18n } from 'vue-i18n'
 import { getFirstImageUrl, getImageUrl } from '../utils/image'
 import { useLocalized, useProductLabels } from '../composables/useProduct'
+import UiBadge from './ui/UiBadge.vue'
+import UiButton from './ui/UiButton.vue'
 
 withDefaults(defineProps<{
   product: any
@@ -150,13 +154,14 @@ const shouldShowStockBadge = (product: any) =>
 
 <style scoped>
 .product-list-hover {
-  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
 .product-list-hover:hover {
-  transform: translate(-2px, -2px);
-  border-color: var(--ui-accent);
-  background-color: var(--ui-bg-overlay-strong);
+  transform: none;
+  border-color: var(--surface-border-strong);
+  background-color: var(--surface-bg-soft);
+  box-shadow: none;
 }
 
 .product-list-hover-disabled:hover {

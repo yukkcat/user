@@ -6,28 +6,7 @@
         <p class="text-sm theme-text-secondary">{{ t('checkout.subtitle') }}</p>
       </div>
 
-      <div class="payment-flow-strip mb-8 rounded-2xl border theme-border theme-panel-soft p-4">
-        <div class="checkout-flow-track flex items-center">
-          <template v-for="(step, idx) in flowSteps" :key="step.key">
-            <div class="checkout-flow-step flex items-center gap-2" :class="idx === 0 ? '' : 'flex-1'">
-              <div v-if="idx > 0" class="flex-1 h-0.5 rounded-full transition-colors"
-                :class="step.active ? 'bg-current theme-text-accent' : 'theme-surface-muted'"></div>
-              <div class="flex items-center gap-2 shrink-0">
-                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors"
-                  :class="step.active
-                    ? 'theme-btn-primary border-transparent'
-                    : 'border-gray-300 dark:border-gray-600 theme-text-muted'">
-                  {{ idx + 1 }}
-                </span>
-                <span class="checkout-flow-label text-sm font-medium"
-                  :class="step.active ? 'theme-text-primary' : 'theme-text-muted'">
-                  {{ step.label }}
-                </span>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
+      <UiFlowSteps class="mb-8" :steps="flowSteps" />
 
       <div
         v-if="cartItems.length === 0"
@@ -45,7 +24,10 @@
       <div v-else class="checkout-layout grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
           <div class="rounded-2xl border theme-panel p-6">
-            <h2 class="mb-4 text-lg font-bold theme-text-primary">{{ t('checkout.itemsTitle') }}</h2>
+            <h2 class="order-section-title mb-4">
+              <span class="order-section-index">1</span>
+              <span>{{ t('checkout.itemsTitle') }}</span>
+            </h2>
             <div class="space-y-4">
               <div
                 v-for="item in cartItems"
@@ -147,7 +129,10 @@
             v-if="!userAuthStore.isAuthenticated"
             class="space-y-4 rounded-2xl border theme-panel p-6"
           >
-            <h2 class="text-lg font-bold theme-text-primary">{{ t('checkout.modeTitle') }}</h2>
+            <h2 class="order-section-title">
+              <span class="order-section-index">2</span>
+              <span>{{ t('checkout.modeTitle') }}</span>
+            </h2>
             <div class="flex flex-wrap gap-3">
               <button
                 @click="checkoutMode = 'guest'"
@@ -166,19 +151,38 @@
               </router-link>
             </div>
 
+            <div v-if="checkoutMode === 'guest'" class="order-credential-note">
+              <p class="font-semibold theme-text-primary">{{ t('guestOrders.tip') }}</p>
+              <p class="mt-1 text-xs theme-text-muted">{{ t('checkout.guestInstructions.password') }}</p>
+            </div>
+
             <div v-if="checkoutMode === 'guest'" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <input
-                v-model="guestEmail"
-                type="email"
-                class="w-full form-input-lg"
-                :placeholder="t('checkout.guestEmailPlaceholder')"
-              />
-              <input
-                v-model="guestPassword"
-                type="password"
-                class="w-full form-input-lg"
-                :placeholder="t('checkout.guestPasswordPlaceholder')"
-              />
+              <label class="form-field">
+                <span class="form-field-label">
+                  <span>{{ t('guestOrders.emailPlaceholder') }}<span class="form-required-mark">*</span></span>
+                </span>
+                <input
+                  v-model="guestEmail"
+                  type="email"
+                  required
+                  autocomplete="email"
+                  class="w-full form-input-lg"
+                  :placeholder="t('checkout.guestEmailPlaceholder')"
+                />
+              </label>
+              <label class="form-field">
+                <span class="form-field-label">
+                  <span>{{ t('guestOrders.passwordPlaceholder') }}<span class="form-required-mark">*</span></span>
+                </span>
+                <input
+                  v-model="guestPassword"
+                  type="password"
+                  required
+                  autocomplete="current-password"
+                  class="w-full form-input-lg"
+                  :placeholder="t('checkout.guestPasswordPlaceholder')"
+                />
+              </label>
             </div>
 
             <div v-if="checkoutMode === 'guest' && guestCaptchaEnabled" class="space-y-2">
@@ -198,13 +202,6 @@
               />
             </div>
 
-            <div v-if="checkoutMode === 'guest'" class="mb-3 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-900">
-              <p class="font-semibold">{{ t('checkout.guestInstructions.title') }}</p>
-              <ul class="mt-2 space-y-1 list-disc pl-5">
-                <li>{{ t('checkout.guestInstructions.email') }}</li>
-                <li>{{ t('checkout.guestInstructions.password') }}</li>
-              </ul>
-            </div>
             <p v-if="checkoutMode === 'guest' && guestEmail && !guestEmailValid" class="text-xs text-red-500">
               {{ t('error.email_invalid') }}
             </p>
@@ -212,7 +209,10 @@
         </div>
 
         <div class="checkout-submit-panel h-fit rounded-2xl border theme-panel p-6 lg:sticky lg:top-24">
-          <h2 class="mb-4 text-lg font-bold theme-text-primary">{{ t('checkout.submitTitle') }}</h2>
+          <h2 class="order-section-title mb-4">
+            <span class="order-section-index">3</span>
+            <span>{{ t('checkout.submitTitle') }}</span>
+          </h2>
           <div class="payment-help-note mb-4 rounded-lg border theme-surface-soft p-3 text-xs theme-text-muted">
             {{ t('checkout.submitHint') }}
           </div>
@@ -287,49 +287,17 @@
 
             <!-- Channel Grid (hidden in wallet-only mode) -->
             <template v-if="!walletOnlyPayment">
-              <div v-if="requiresOnlineChannel && paymentChannels.length > 0" class="payment-channel-grid grid grid-cols-2 gap-2">
-                <button v-for="channel in paymentChannels" :key="channel.id"
-                  type="button"
-                  :disabled="isChannelDisabledForAmount(channel)"
-                  :aria-pressed="selectedChannelId === channel.id && !isChannelDisabledForAmount(channel)"
-                  :title="isChannelDisabledForAmount(channel) ? channelAmountLimitHint(channel) : ''"
-                  @click="handleSelectChannel(channel)"
-                  class="payment-channel-card text-left border rounded-lg p-2.5 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
-                  :class="selectedChannelId === channel.id && !isChannelDisabledForAmount(channel) ? 'theme-selected-surface' : 'theme-interactive-surface'">
-                  <div class="flex items-center justify-between gap-2">
-                    <div class="flex min-w-0 items-center gap-2">
-                      <img v-if="channel.icon" :src="getImageUrl(channel.icon)" loading="lazy" class="h-5 w-5 rounded object-contain shrink-0" />
-                      <div class="text-sm theme-text-primary font-medium truncate">{{ channel.name }}</div>
-                    </div>
-                    <span
-                      class="payment-channel-action-mark"
-                      :class="selectedChannelId === channel.id && !isChannelDisabledForAmount(channel)
-                        ? 'payment-channel-action-mark-selected'
-                        : isChannelDisabledForAmount(channel)
-                          ? 'payment-channel-action-mark-disabled'
-                          : ''"
-                    >
-                      {{
-                        selectedChannelId === channel.id && !isChannelDisabledForAmount(channel)
-                          ? t('payment.selected')
-                          : isChannelDisabledForAmount(channel)
-                            ? t('payment.unavailable')
-                            : t('payment.tapToSelect')
-                      }}
-                    </span>
-                  </div>
-                  <div class="mt-1 space-y-0.5 text-xs theme-text-muted">
-                    <div>{{ t('payment.feeLabel') }}：{{ formatChannelFeeRate(channel) }}</div>
-                    <div>{{ t('payment.fixedFeeLabel') }}：{{ formatChannelFixedFee(channel) }}</div>
-                  </div>
-                  <div v-if="isChannelDisabledForAmount(channel)" class="mt-1 text-xs text-amber-600">
-                    {{ channelAmountLimitHint(channel) }}
-                  </div>
-                </button>
-              </div>
-              <div v-else-if="requiresOnlineChannel && paymentChannels.length === 0" class="text-xs theme-text-muted">
-                {{ t('checkout.noPaymentChannels') }}
-              </div>
+              <PaymentChannelSelector
+                v-if="requiresOnlineChannel"
+                v-model="selectedChannelId"
+                :channels="paymentChannels"
+                :show-balance-option="false"
+                :format-channel-fee-rate="formatChannelFeeRate"
+                :format-channel-fixed-fee="formatChannelFixedFee"
+                :is-channel-disabled-for-amount="isChannelDisabledForAmount"
+                :channel-amount-limit-hint="channelAmountLimitHint"
+                compact
+              />
             </template>
             <div v-if="!requiresOnlineChannel" class="text-xs text-emerald-600 dark:text-emerald-400">
               {{ t('checkout.walletCoversAll') }}
@@ -385,6 +353,8 @@ import { getAffiliateCode, getAffiliateVisitorKey } from '../utils/affiliate'
 import ImageCaptcha from '../components/captcha/ImageCaptcha.vue'
 import TurnstileCaptcha from '../components/captcha/TurnstileCaptcha.vue'
 import CheckoutManualForm from '../components/checkout/CheckoutManualForm.vue'
+import PaymentChannelSelector from '../components/payment/PaymentChannelSelector.vue'
+import UiFlowSteps from '../components/ui/UiFlowSteps.vue'
 import { useLocalized } from '../composables/useProduct'
 
 const router = useRouter()
@@ -530,11 +500,6 @@ const channelAmountLimitHint = (channel?: any) => {
     })
   }
   return ''
-}
-
-const handleSelectChannel = (channel?: any) => {
-  if (!channel || isChannelDisabledForAmount(channel)) return
-  selectedChannelId.value = Number(channel.id) || null
 }
 
 const selectedChannelAmountHint = computed(() => {
@@ -927,20 +892,23 @@ const canSubmit = computed(() => {
   if (cartItems.value.length === 0) return false
   if (!manualFormValidation.value.valid) return false
   if (cartItems.value.some((item) => itemStockExceeded(item))) return false
+  if (!userAuthStore.isAuthenticated) {
+    if (checkoutMode.value !== 'guest') return false
+    if (!guestEmail.value.trim() || !guestPassword.value.trim() || !guestEmailValid.value) return false
+    if (guestCaptchaEnabled.value) {
+      if (captchaProvider.value === 'image') {
+        return Boolean(guestCaptchaPayload.value.captcha_id && guestCaptchaPayload.value.captcha_code)
+      }
+      if (captchaProvider.value === 'turnstile') {
+        return Boolean(guestTurnstileToken.value)
+      }
+      return false
+    }
+  }
   if (walletOnlyPayment.value && expectedOnlinePayCents.value > 0) return false
   if (!walletOnlyPayment.value && requiresOnlineChannel.value && !selectedChannelId.value) return false
   if (requiresOnlineChannel.value && selectedChannelAmountHint.value) return false
-  if (userAuthStore.isAuthenticated) return true
-  if (checkoutMode.value !== 'guest') return false
-  if (!guestEmail.value.trim() || !guestPassword.value.trim() || !guestEmailValid.value) return false
-  if (!guestCaptchaEnabled.value) return true
-  if (captchaProvider.value === 'image') {
-    return Boolean(guestCaptchaPayload.value.captcha_id && guestCaptchaPayload.value.captcha_code)
-  }
-  if (captchaProvider.value === 'turnstile') {
-    return Boolean(guestTurnstileToken.value)
-  }
-  return false
+  return true
 })
 
 const submitBlockedReason = computed(() => {
@@ -953,21 +921,22 @@ const submitBlockedReason = computed(() => {
   if (stockBlockedItem) {
     return itemStockHint(stockBlockedItem) || t('cart.stockOut')
   }
+  if (!userAuthStore.isAuthenticated) {
+    if (checkoutMode.value !== 'guest') return t('checkout.errors.loginOrGuest')
+    if (!guestEmail.value.trim() || !guestPassword.value.trim()) return t('checkout.errors.missingGuest')
+    if (!guestEmailValid.value) return t('error.email_invalid')
+    if (guestCaptchaEnabled.value) {
+      if (captchaProvider.value === 'image' && (!guestCaptchaPayload.value.captcha_id || !guestCaptchaPayload.value.captcha_code)) {
+        return t('auth.common.captchaRequired')
+      }
+      if (captchaProvider.value === 'turnstile' && !guestTurnstileToken.value) {
+        return t('auth.common.captchaRequired')
+      }
+    }
+  }
   if (walletOnlyPayment.value && expectedOnlinePayCents.value > 0) return t('payment.walletInsufficientHint')
   if (!walletOnlyPayment.value && requiresOnlineChannel.value && !selectedChannelId.value) return t('checkout.errors.selectPayment')
   if (requiresOnlineChannel.value && selectedChannelAmountHint.value) return selectedChannelAmountHint.value
-  if (userAuthStore.isAuthenticated) return ''
-  if (checkoutMode.value !== 'guest') return t('checkout.errors.loginOrGuest')
-  if (!guestEmail.value.trim() || !guestPassword.value.trim()) return t('checkout.errors.missingGuest')
-  if (!guestEmailValid.value) return t('error.email_invalid')
-  if (guestCaptchaEnabled.value) {
-    if (captchaProvider.value === 'image' && (!guestCaptchaPayload.value.captcha_id || !guestCaptchaPayload.value.captcha_code)) {
-      return t('auth.common.captchaRequired')
-    }
-    if (captchaProvider.value === 'turnstile' && !guestTurnstileToken.value) {
-      return t('auth.common.captchaRequired')
-    }
-  }
   return ''
 })
 

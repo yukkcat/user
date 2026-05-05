@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Transition
     enter-active-class="transition duration-300 ease-out"
     enter-from-class="translate-y-full opacity-0"
@@ -7,7 +7,10 @@
     leave-from-class="translate-y-0 opacity-100"
     leave-to-class="translate-y-full opacity-0">
     <div v-if="visible"
-      class="lg:hidden fixed bottom-0 left-0 right-0 z-40 theme-panel-strong backdrop-blur-xl border-t theme-border shadow-2xl theme-safe-bottom">
+      class="product-mobile-bar commerce-bottom-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 theme-panel-strong border-t theme-border theme-safe-bottom">
+      <div v-if="hint" class="payment-mobile-paybar-hint">
+        {{ hint }}
+      </div>
       <div class="flex items-center gap-3 px-4 py-3">
         <!-- Price -->
         <div class="flex-1 min-w-0">
@@ -65,6 +68,7 @@ defineProps<{
   showProductPromotionPrice: boolean
   productPromotionPriceDisplay: string
   productPriceDisplay: string
+  hint?: string
 }>()
 
 defineEmits<{

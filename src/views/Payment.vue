@@ -11,20 +11,7 @@
             t('payment.backToOrders') }}</router-link>
       </div>
 
-      <div class="payment-flow-strip mb-8 rounded-2xl border border-gray-200 theme-panel-soft p-4">
-        <div class="grid grid-cols-3 gap-3">
-          <div
-            v-for="step in flowSteps"
-            :key="step.key"
-            class="theme-step-chip"
-            :class="step.active
-              ? 'theme-step-chip-active'
-              : 'theme-step-chip-inactive'"
-          >
-            {{ step.label }}
-          </div>
-        </div>
-      </div>
+      <UiFlowSteps class="mb-8" :steps="flowSteps" />
 
       <div v-if="loading"
         class="h-40 border theme-surface-muted rounded-2xl animate-pulse">
@@ -33,14 +20,30 @@
       <div v-else-if="showGuestAuthForm"
         class="theme-panel rounded-2xl p-6">
         <h2 class="text-lg font-bold mb-2">{{ t('payment.guestAuthTitle') }}</h2>
-        <p class="text-xs theme-text-muted mb-4">{{ t('payment.guestAuthHint') }}</p>
+        <div class="order-credential-note mb-4">
+          <p class="font-semibold theme-text-primary">{{ t('payment.guestAuthHint') }}</p>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input v-model="guestAuth.email" type="email"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.emailPlaceholder')" />
-          <input v-model="guestAuth.order_password" type="password"
-            class="form-input-lg"
-            :placeholder="t('guestOrders.passwordPlaceholder')" />
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.emailPlaceholder') }}<span class="form-required-mark">*</span></span>
+            </span>
+            <input v-model="guestAuth.email" type="email"
+              required
+              autocomplete="email"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.emailPlaceholder')" />
+          </label>
+          <label class="form-field">
+            <span class="form-field-label">
+              <span>{{ t('guestOrders.passwordPlaceholder') }}<span class="form-required-mark">*</span></span>
+            </span>
+            <input v-model="guestAuth.order_password" type="password"
+              required
+              autocomplete="current-password"
+              class="form-input-lg"
+              :placeholder="t('guestOrders.passwordPlaceholder')" />
+          </label>
         </div>
         <div v-if="guestAuthError"
           class="text-red-400 text-sm mt-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg p-3">
@@ -209,7 +212,10 @@
       <div v-else class="payment-create-view grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
           <div class="theme-panel payment-info-card rounded-2xl p-6">
-            <h2 class="text-lg font-bold mb-4 theme-text-primary">{{ t('payment.orderInfo') }}</h2>
+            <h2 class="order-section-title mb-4">
+              <span class="order-section-index">1</span>
+              <span>{{ t('payment.orderInfo') }}</span>
+            </h2>
             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div>
                 <div class="text-xs uppercase tracking-wider theme-text-muted">{{ t('payment.orderNo') }}</div>
@@ -312,7 +318,10 @@
             <div class="payment-section-title-row mb-4">
               <div>
                 <div class="payment-eyebrow">{{ t('payment.guideTitle') }}</div>
-                <h2 class="text-lg font-bold theme-text-primary">{{ t('payment.channelTitle') }}</h2>
+                <h2 class="order-section-title mt-2">
+                  <span class="order-section-index">2</span>
+                  <span>{{ t('payment.channelTitle') }}</span>
+                </h2>
               </div>
             </div>
             <div class="payment-help-note mb-5">
@@ -434,7 +443,10 @@
         </div>
 
         <div class="payment-submit-panel h-fit rounded-2xl border theme-panel p-6 lg:sticky lg:top-24">
-          <h2 class="text-lg font-bold mb-4 theme-text-primary">{{ t('payment.actionTitle') }}</h2>
+          <h2 class="order-section-title mb-4">
+            <span class="order-section-index">3</span>
+            <span>{{ t('payment.actionTitle') }}</span>
+          </h2>
           <div class="payment-help-note mb-4">
             {{ t('payment.submitHint') }}
           </div>
@@ -517,6 +529,7 @@ import { amountToCents, basisPointsToPercent, calculateFeeCents, centsToAmount, 
 import { buildSkuDisplayTextFromSnapshot } from '../utils/sku'
 import PaymentAmountBreakdown from '../components/payment/PaymentAmountBreakdown.vue'
 import PaymentChannelSelector from '../components/payment/PaymentChannelSelector.vue'
+import UiFlowSteps from '../components/ui/UiFlowSteps.vue'
 import QRCode from 'qrcode'
 import { pageAlertClass, type PageAlert } from '../utils/alerts'
 
@@ -825,6 +838,9 @@ const feeRateBasisPoints = computed(() => {
   return null
 })
 const feeRateDisplay = computed(() => {
+  if (!paymentResult.value && requiresOnlineChannel.value && !selectedChannel.value) {
+    return t('payment.feeSelectMethodFirst')
+  }
   const rate = feeRateBasisPoints.value
   const fixed = paymentResult.value?.fixed_fee !== undefined ? paymentResult.value.fixed_fee : selectedChannel.value?.fixed_fee
 
@@ -866,7 +882,11 @@ const feeAmountCents = computed(() => {
 })
 const feeAmountDisplay = computed(() => {
   const value = feeAmountCents.value
-  if (value === null) return '-'
+  if (value === null) {
+    return !paymentResult.value && requiresOnlineChannel.value && !selectedChannel.value
+      ? t('payment.feeSelectMethodFirst')
+      : formatMoney('0.00', order.value?.currency)
+  }
   return formatMoney(centsToAmount(value), order.value?.currency)
 })
 const fixedFeeDisplay = computed(() => {
@@ -882,7 +902,8 @@ const payableAmountDisplay = computed(() => {
   }
   const base = amountToCents(order.value?.total_amount)
   const fee = feeAmountCents.value
-  if (base === null || fee === null) return '-'
+  if (base === null) return '-'
+  if (fee === null) return formatMoney(centsToAmount(base), order.value?.currency)
   return formatMoney(centsToAmount(base + fee), order.value?.currency)
 })
 const walletBalanceDisplay = computed(() => formatMoney(walletBalance.value, order.value?.currency))

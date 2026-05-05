@@ -1,5 +1,10 @@
 <template>
-  <div id="app" class="min-h-screen theme-page flex flex-col">
+  <div
+    id="app"
+    class="commerce-page min-h-screen theme-page flex flex-col"
+    data-ui-theme="commerce-clear"
+    :data-mode="theme"
+  >
     <Navbar />
     <main class="flex-1 pb-14 lg:pb-0">
       <ErrorBoundary>
@@ -29,9 +34,11 @@ import ConfirmDialog from './components/ConfirmDialog.vue'
 import ErrorBoundary from './components/ErrorBoundary.vue'
 import BackToTop from './components/BackToTop.vue'
 import MobileBottomNav from './components/MobileBottomNav.vue'
+import { useTheme } from './utils/theme'
 
 // config 由 router.beforeEach 统一加载，无需在此重复调用
 const appStore = useAppStore()
+const { theme } = useTheme()
 </script>
 
 <style>

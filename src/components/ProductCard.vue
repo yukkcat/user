@@ -32,18 +32,20 @@
       </div>
 
       <div v-if="isSoldOut(product)" class="absolute inset-0 z-20 bg-black/40"></div>
-      <div
+      <UiBadge
         v-if="isSoldOut(product)"
-        class="absolute left-2 top-2 md:left-3 md:top-3 z-30 theme-badge theme-badge-solid-danger">
+        variant="danger"
+        size="sm"
+        class="absolute left-2 top-2 md:left-3 md:top-3 z-30">
         {{ t('products.stockStatus.outOfStock') }}
-      </div>
+      </UiBadge>
 
       <div
         v-else-if="primaryTag"
         class="absolute top-2 right-2 md:top-3 md:right-3 z-20 flex justify-end">
-        <span class="theme-badge theme-badge-inverse">
+        <UiBadge variant="inverse" size="sm">
           {{ primaryTag }}
-        </span>
+        </UiBadge>
       </div>
     </div>
 
@@ -59,20 +61,18 @@
       </h3>
 
       <div class="mb-2.5 md:mb-3 flex flex-wrap items-center gap-1.5">
-        <span
-          class="theme-badge"
+        <UiBadge
           :class="product.fulfillment_type === 'auto' ? 'theme-badge-info' : 'theme-badge-neutral'">
           {{ getFulfillmentTypeLabel(product.fulfillment_type) }}
-        </span>
-        <span
+        </UiBadge>
+        <UiBadge
           v-if="shouldShowStockBadge(product)"
-          class="theme-badge"
           :class="getStockBadgeClass(product.stock_status)">
           {{ getStockStatusLabel(product) }}
-        </span>
-        <span v-else-if="product.purchase_type === 'member'" class="theme-badge theme-badge-success">
+        </UiBadge>
+        <UiBadge v-else-if="product.purchase_type === 'member'" class="theme-badge-success">
           {{ getPurchaseTypeLabel(product.purchase_type) }}
-        </span>
+        </UiBadge>
       </div>
 
       <p class="hidden md:block theme-text-secondary text-sm mb-5 line-clamp-2">
@@ -94,26 +94,28 @@
             <span class="hidden md:inline text-xs theme-price-original line-through">
               {{ formatPrice(product.price_amount, siteCurrency) }}
             </span>
-            <span class="theme-badge theme-badge-danger theme-badge-xs">
+            <UiBadge variant="danger" size="xs">
               {{ t('products.promotionTag') }}
-            </span>
+            </UiBadge>
           </div>
           <div v-else-if="hasPromotionRules(product)" class="mt-1 flex flex-wrap items-center gap-1.5">
-            <span class="theme-badge theme-badge-warning theme-badge-xs">
+            <UiBadge variant="warning" size="xs">
               {{ t('products.promotionBadge') }}
-            </span>
+            </UiBadge>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
-          <button
+          <UiButton
             type="button"
-            class="theme-btn-secondary h-8 md:h-9 px-2.5 md:px-3 text-[10px] md:text-[11px] leading-none"
+            variant="secondary"
+            size="sm"
+            class="h-8 md:h-9 px-2.5 md:px-3 text-[10px] md:text-[11px] leading-none"
             :class="isSoldOut(product) ? 'opacity-40 cursor-not-allowed' : ''"
             :disabled="isSoldOut(product)"
             @click.stop="$emit('quickBuy', product)">
             {{ t('products.quickBuy') }}
-          </button>
+          </UiButton>
 
           <span
             class="hidden md:flex text-[11px] font-semibold items-center gap-1 transition-colors"
@@ -143,6 +145,8 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getFirstImageUrl, getImageUrl } from '../utils/image'
 import { useLocalized, useProductLabels } from '../composables/useProduct'
+import UiBadge from './ui/UiBadge.vue'
+import UiButton from './ui/UiButton.vue'
 
 const props = withDefaults(defineProps<{
   product: any
@@ -181,13 +185,14 @@ const shouldShowStockBadge = (product: any) =>
 
 <style scoped>
 .product-hover-card {
-  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
 .product-hover-card:hover {
-  transform: translate(-2px, -2px);
-  border-color: var(--ui-accent);
-  background-color: var(--ui-bg-overlay-strong);
+  transform: translateY(-2px);
+  border-color: var(--surface-border-strong);
+  background-color: var(--card-bg-strong);
+  box-shadow: var(--shadow-card-strong);
 }
 
 .product-hover-card-disabled:hover {

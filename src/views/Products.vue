@@ -24,40 +24,32 @@
           @clear-search="clearSearch"
         />
 
-        <!-- Main Content - Products Grid -->
+        <!-- Main Content - Products List -->
         <main class="flex-1">
           <!-- Loading Skeleton -->
-          <div v-if="loading" class="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div v-if="loading" class="product-list-page">
             <div v-for="i in 4" :key="i"
-              class="theme-panel rounded-2xl border overflow-hidden flex flex-col">
-              <div class="h-36 md:h-56 theme-skeleton"></div>
-              <div class="p-3 md:p-5 space-y-3">
-                <div class="h-3 w-16 rounded theme-skeleton"></div>
-                <div class="h-5 w-3/4 rounded theme-skeleton"></div>
-                <div class="flex gap-2">
-                  <div class="h-5 w-14 rounded-full theme-skeleton"></div>
-                  <div class="h-5 w-14 rounded-full theme-skeleton"></div>
-                </div>
-                <div class="h-3 w-full rounded theme-skeleton"></div>
-                <div class="h-3 w-2/3 rounded theme-skeleton"></div>
-                <div class="border-t theme-border pt-3 flex justify-between items-center">
-                  <div class="h-6 w-20 rounded theme-skeleton"></div>
-                  <div class="h-4 w-16 rounded theme-skeleton"></div>
-                </div>
+              class="theme-panel product-list-skeleton-row border flex items-center overflow-hidden">
+              <div class="theme-skeleton m-2 h-14 w-14 shrink-0 md:h-16 md:w-16"></div>
+              <div class="flex-1 space-y-2 px-2 py-3 md:px-4">
+                <div class="h-4 w-1/2 rounded theme-skeleton"></div>
+                <div class="h-3 w-1/3 rounded theme-skeleton"></div>
+              </div>
+              <div class="hidden px-4 md:block">
+                <div class="h-5 w-20 rounded theme-skeleton"></div>
               </div>
             </div>
           </div>
 
-          <!-- Products Grid -->
+          <!-- Products List -->
           <div v-else-if="products.length > 0">
-            <div class="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4">
-              <ProductCard
+            <div class="product-list-page">
+              <ProductListItem
                 v-for="(product, idx) in products"
                 :key="product.id"
                 :product="product"
                 :index="idx"
-                :max-tags="isMobileGrid ? 1 : 2"
-                :animation-step="50"
+                :animation-step="20"
                 @click="goToProduct"
                 @quick-buy="openQuickBuy"
               />
@@ -107,7 +99,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useProductList } from '../composables/useProductList'
-import ProductCard from '../components/ProductCard.vue'
+import ProductListItem from '../components/ProductListItem.vue'
 import ProductQuickBuy from '../components/ProductQuickBuy.vue'
 import CategorySidebar from '../components/CategorySidebar.vue'
 import PaginationNav from '../components/PaginationNav.vue'
@@ -141,23 +133,15 @@ const openQuickBuy = (product: any) => {
   quickBuyVisible.value = true
 }
 
-// Detect mobile 2-col grid (< md breakpoint)
-const isMobileGrid = ref(window.innerWidth < 768)
-const handleResize = () => {
-  isMobileGrid.value = window.innerWidth < 768
-}
-
 const goToProduct = (slug: string) => {
   router.push(`/products/${slug}`)
 }
 
 onMounted(async () => {
-  window.addEventListener('resize', handleResize, { passive: true })
   await initialize()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
   cleanup()
 })
 </script>
